@@ -15,6 +15,9 @@ builder.Services.AddDbContext<ApplicationContext>(
     .GetConnectionString("DefaultSQLConnection")));
 builder.Services.AddScoped<IParkingSpotRepository,ParkingSpotRepository>();
 builder.Services.AddScoped<IPricingPlanRepository,PricingPlanRepository>();
+builder.Services.AddScoped<ISubscriberRepository,SubscriberRepository>();
+builder.Services.AddScoped<ISubscriptionRepository,SubscriptionRepository>();
+
 
 var app = builder.Build();
 

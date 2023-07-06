@@ -36,10 +36,29 @@ namespace ParkingLotManagementAPI.Controllers
             }
             return Ok(pricingPlansDTOs);
         }
-        [HttpPut("{id:int}")]
-        public async Task< ActionResult> UpdatePricingPlan(int id, [FromBody] PricingPlan updatedPricingPlanDTO)
+        [HttpGet("{type}")]
+        public async Task<ActionResult<PricingPlanDTO>> GetPricingPlan(string type)
         {
-            var pricePlaningEntity=await pricingPlanRepository.GetPricingPlanAsync(id);
+            var pricePlaningEntity = await pricingPlanRepository.GetPricingPlanAsync(type);
+            if(pricePlaningEntity==null)
+            {
+                return NotFound();
+            }
+            var pricingPlaningDTO = new PricingPlanDTO
+            {
+                Id = pricePlaningEntity.Id,
+                HourlyPricing = pricePlaningEntity.HourlyPricing,
+                DailyPricing = pricePlaningEntity.DailyPricing,
+                MinimumHours = pricePlaningEntity.MinimumHours,
+                Type = pricePlaningEntity.Type
+            };
+            return Ok(pricingPlaningDTO);
+        }
+        [HttpPut("{type}")]
+        public async Task< ActionResult> UpdatePricingPlan(string type, 
+            [FromBody] PricingPlan updatedPricingPlanDTO)
+        {
+            var pricePlaningEntity=await pricingPlanRepository.GetPricingPlanAsync(type);
             if (pricePlaningEntity == null)
             {
                 return NotFound();

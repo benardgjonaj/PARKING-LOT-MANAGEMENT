@@ -12,7 +12,7 @@ using ParkingLotManagementAPI.Data;
 namespace ParkingLotManagementAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230704135954_initial")]
+    [Migration("20230703142154_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

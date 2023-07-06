@@ -13,9 +13,9 @@ namespace ParkingLotManagementAPI.Services
             this.context = context;
         }
 
-        public async Task<PricingPlan?> GetPricingPlanAsync(int id)
+        public async Task<PricingPlan?> GetPricingPlanAsync(string type)
         {
-           return await context.PricingPlans.Where(p=>p.Id == id).FirstOrDefaultAsync();
+           return await context.PricingPlans.Where(p=>p.Type == type).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<PricingPlan>> GetPricingPlansAsync()
