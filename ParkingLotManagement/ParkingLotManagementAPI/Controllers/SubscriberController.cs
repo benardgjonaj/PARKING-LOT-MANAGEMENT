@@ -156,12 +156,6 @@ namespace ParkingLotManagementAPI.Controllers
                 return NotFound();
             }
 
-            if(await subscriberRepository.IdCarNumberExistAsync(updatedSubscriberDTO.IdCardNumber)
-                &&updatedSubscriberDTO.IdCardNumber != subscriber.IdCardNumber)
-            {
-                return Conflict("A sucriber with the same Id Card number already exist");
-            }
-
             subscriber.FirstName= updatedSubscriberDTO.FirstName;
             subscriber.LastName= updatedSubscriberDTO.LastName;
             subscriber.PhoneNumber= updatedSubscriberDTO.PhoneNumber;

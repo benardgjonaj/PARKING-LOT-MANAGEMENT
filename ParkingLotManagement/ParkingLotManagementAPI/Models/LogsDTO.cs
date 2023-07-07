@@ -1,15 +1,15 @@
-﻿namespace ParkingLotManagementAPI.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ParkingLotManagementAPI.Models
 {
-    public class Logs
+    public class LogsDTO
     {
-        public int Id { get; set; }
+        [Required]
         public string Code { get; set; }
         public int? SubscriptionId { get; set; }
+        [Required]
         public DateTime CheckInTime { get; set; }
+        [Required]
         public DateTime CheckOutTime { get; set; }
-        public decimal Price { get; set; }
-       public Subscription Subscription { get; set; }
-
-
     }
 }

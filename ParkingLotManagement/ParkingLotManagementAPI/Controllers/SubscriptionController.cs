@@ -124,37 +124,5 @@ namespace ParkingLotManagementAPI.Controllers
             };
             return Ok(createdSubscriptionDTO);
         }
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateSubscription(int id,
-         [FromBody] SubscriptionForCreationDTO subscriptionForCreationDTO)
-        {
-            var subscription = await subscriptionRepository.GetSubscriptionAsync(id);
-            if (subscription == null)
-            {
-                return NotFound();
-            }
-            if(await subscriptionRepository.CodeExistAsync(subscriptionForCreationDTO.Code)
-                &&subscriptionForCreationDTO.Code!=subscription.Code)
-            {
-                return Conflict("A subscription with the same Code  number already exists.");
-            }
-            subscription.Code = subscriptionForCreationDTO.Code;
-            subscription.Price = subscriptionForCreationDTO.Price;
-            subscription.StartDate = subscriptionForCreationDTO.StartDate;
-            subscription.EndDate = subscriptionForCreationDTO.EndDate;
-            subscription.DiscountValue = subscriptionForCreationDTO.DiscountValue;
-            subscription.IsDeleted = subscriptionForCreationDTO.IsDeleted;
-            await subscriptionRepository.SaveChangesAsync();
-
-            return NoContent();
-
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteSubscription(int id)
-        {
-            subscriptionRepository.DeleteSubscription(id);
-            return NoContent();
-        }
     }
 }

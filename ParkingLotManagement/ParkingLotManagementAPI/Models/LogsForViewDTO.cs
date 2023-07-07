@@ -1,15 +1,12 @@
-﻿namespace ParkingLotManagementAPI.Entities
+﻿namespace ParkingLotManagementAPI.Models
 {
-    public class Logs
+    public class LogsForViewDTO
     {
-        public int Id { get; set; }
+     
         public string Code { get; set; }
         public int? SubscriptionId { get; set; }
         public DateTime CheckInTime { get; set; }
         public DateTime CheckOutTime { get; set; }
         public decimal Price { get; set; }
-       public Subscription Subscription { get; set; }
-
-
     }
 }

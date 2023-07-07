@@ -29,14 +29,9 @@ namespace ParkingLotManagementAPI.Services
             return false;
         }
 
-        public void DeleteSubscription(int id)
+        public void DeleteSubscriptionr(int id)
         {
-            var subscription = context.Subscriptions.Find(id);
-            if (subscription != null)
-            {
-                subscription.IsDeleted = true;
-                context.SaveChanges();
-            }
+            throw new NotImplementedException();
         }
 
         public async Task<Subscription> GetSubscriptionAsync(int id)
