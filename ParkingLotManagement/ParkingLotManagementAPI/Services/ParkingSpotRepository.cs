@@ -14,12 +14,26 @@ namespace ParkingLotManagementAPI.Services
             this.context = context;
         }
 
-        public async Task<ParkingSpot> GetParkingSpots()
+        public async Task<ParkingSpot> GetParkingSpot(int id)
         {
-           return await context.ParkingSpots.FirstOrDefaultAsync(p=>p.Id==1);
+           return await context.ParkingSpots.FirstOrDefaultAsync(p=>p.Id==id);
             
-           
+        }
 
+        public async Task<ParkingSpotViewDTO> GetParkingSpotInfo()
+        {
+            var parkingSpotInfo = new ParkingSpotViewDTO();
+            parkingSpotInfo.TotalSpots = await context.ParkingSpots.SumAsync(ps => ps.TotalSpots);
+            parkingSpotInfo.ReservedSpots = await context.Subscriptions.CountAsync(s => s.IsDeleted == false);
+            parkingSpotInfo.RegularSpots = parkingSpotInfo.TotalSpots - parkingSpotInfo.ReservedSpots;
+
+            return parkingSpotInfo;
+
+
+        }
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await context.SaveChangesAsync() >= 0);
         }
     }
 }

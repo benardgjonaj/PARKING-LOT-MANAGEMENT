@@ -19,10 +19,10 @@ namespace ParkingLotManagementAPI.Services
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 subscribers = subscribers.Where(s =>
-                    s.FirstName.Contains(searchQuery) ||
-                    s.LastName.Contains(searchQuery) ||
-                    s.IdCardNumber.Contains(searchQuery) ||
-                    s.Email.Contains(searchQuery));
+                    s.FirstName==searchQuery ||
+                    s.LastName == searchQuery ||
+                    s.IdCardNumber == searchQuery ||
+                    s.Email == searchQuery);
             }
 
             return await subscribers.ToListAsync();
@@ -46,7 +46,9 @@ namespace ParkingLotManagementAPI.Services
             if (subscriber != null)
             {
                 subscriber.IsDeleted = true;
-                context.SaveChangesAsync();
+               var  subscription= context.Subscriptions.Find(subscriber.Id);
+                subscription.IsDeleted = true;
+                context.SaveChanges();
             }
         }
 

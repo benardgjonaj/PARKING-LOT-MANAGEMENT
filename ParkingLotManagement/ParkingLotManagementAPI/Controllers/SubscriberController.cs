@@ -13,16 +13,18 @@ namespace ParkingLotManagementAPI.Controllers
     public class SubscriberController : ControllerBase
     {
         private readonly ISubscriberRepository subscriberRepository;
+        private readonly ISubscriptionRepository subscriptionRepository;
 
-        public SubscriberController(ISubscriberRepository subscriberRepository)
+        public SubscriberController(ISubscriberRepository subscriberRepository,ISubscriptionRepository subscriptionRepository)
         {
             this.subscriberRepository = subscriberRepository;
+            this.subscriptionRepository = subscriptionRepository;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SubscriberDTO>>> GetSubcribers(string? searchQuery)
+        public async Task<ActionResult<IEnumerable<SubscriberForCreationDTO>>> GetSubcribers(string? searchQuery)
         {
             var subscribers = await subscriberRepository.GetSubcribersAsync(searchQuery);
-            var subscribersDto = new List<SubscriberDTO>();
+            var subscribersDto = new List<SubscriberForCreationDTO>();
             if (subscribers == null)
             {
                 return NotFound();
@@ -30,7 +32,7 @@ namespace ParkingLotManagementAPI.Controllers
 
             foreach (var subscriber in subscribers)
             {
-                subscribersDto.Add(new SubscriberDTO
+                subscribersDto.Add(new SubscriberForCreationDTO
                 {
                     FirstName = subscriber.FirstName,
                     LastName = subscriber.LastName,
@@ -46,14 +48,14 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(subscribersDto);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<SubscriberDTO>> GetSubcriber(int id)
+        public async Task<ActionResult<SubscriberForCreationDTO>> GetSubcriber(int id)
         {
             var subscriber= await subscriberRepository.GetSubcriberAsync(id);
             if (subscriber == null)
             {
                 return NotFound();
             }
-            var subscriberDTO = new SubscriberDTO
+            var subscriberDTO = new SubscriberForCreationDTO
             {
                 FirstName = subscriber.FirstName,
                 LastName = subscriber.LastName,
@@ -62,6 +64,7 @@ namespace ParkingLotManagementAPI.Controllers
                 PhoneNumber = subscriber.PhoneNumber,
                 Email = subscriber.Email,
                 PlateNumber = subscriber.PlateNumber,
+                IsDeleted=subscriber.IsDeleted,
             };
 
             return Ok(subscriberDTO);
@@ -112,7 +115,11 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return Conflict("A subscriber with the same ID card number already exists.");
             }
-          
+            if (await subscriptionRepository.CodeExistAsync(subscriber.Subscription.Code))
+            {
+                return Conflict("A subscription with the same Code  number already exists.");
+            }
+
             await subscriberRepository.AddSubcriberAsync(subscriber);
 
           
@@ -172,7 +179,7 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSubscriber(int id)
         {
-            subscriberRepository.DeleteSubscriber(id);
+            subscriptionRepository.DeleteSubscription(id);
             return NoContent();
         }
     }

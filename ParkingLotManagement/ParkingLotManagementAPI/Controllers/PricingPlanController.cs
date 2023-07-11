@@ -27,11 +27,11 @@ namespace ParkingLotManagementAPI.Controllers
             foreach (var pricingplan in pricingPlansEntities)
             {
                 pricingPlansDTOs.Add(new PricingPlanDTO {
-                Id=pricingplan.Id,
-                HourlyPricing=pricingplan.HourlyPricing,
+                    Type = pricingplan.Type,
+                HourlyPricing =pricingplan.HourlyPricing,
                 DailyPricing=pricingplan.DailyPricing,
                 MinimumHours=pricingplan.MinimumHours,
-                Type=pricingplan.Type
+                
                 });
             }
             return Ok(pricingPlansDTOs);
@@ -46,11 +46,11 @@ namespace ParkingLotManagementAPI.Controllers
             }
             var pricingPlaningDTO = new PricingPlanDTO
             {
-                Id = pricePlaningEntity.Id,
+                Type = pricePlaningEntity.Type,
                 HourlyPricing = pricePlaningEntity.HourlyPricing,
                 DailyPricing = pricePlaningEntity.DailyPricing,
                 MinimumHours = pricePlaningEntity.MinimumHours,
-                Type = pricePlaningEntity.Type
+               
             };
             return Ok(pricingPlaningDTO);
         }
@@ -63,11 +63,11 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
-
+            pricePlaningEntity.Type = updatedPricingPlanDTO.Type;
             pricePlaningEntity.MinimumHours = updatedPricingPlanDTO.MinimumHours;
             pricePlaningEntity.DailyPricing = updatedPricingPlanDTO.DailyPricing;
             pricePlaningEntity.HourlyPricing = updatedPricingPlanDTO.HourlyPricing;
-            pricePlaningEntity.Type=updatedPricingPlanDTO.Type;
+            
             await pricingPlanRepository.SaveChangesAsync();
 
             return NoContent();

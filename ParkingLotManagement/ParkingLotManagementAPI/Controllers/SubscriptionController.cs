@@ -11,10 +11,12 @@ namespace ParkingLotManagementAPI.Controllers
     public class SubscriptionController : ControllerBase
     {
         private readonly ISubscriptionRepository subscriptionRepository;
+        private readonly ISubscriberRepository subscriberRepository;
 
-        public SubscriptionController(ISubscriptionRepository subscriptionRepository)
+        public SubscriptionController(ISubscriptionRepository subscriptionRepository,ISubscriberRepository subscriberRepository)
         {
             this.subscriptionRepository = subscriptionRepository;
+            this.subscriberRepository = subscriberRepository;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionForViewDTO>>> GetSubscriptions(string? searchQuery)
@@ -98,6 +100,10 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return Conflict("A subscription with the same Code  number already exists.");
             }
+            if (await subscriberRepository.IdCarNumberExistAsync(subscription.Subscriber.IdCardNumber))
+            {
+                return Conflict("A subscriber with the same ID card number already exists.");
+            }
             await subscriptionRepository.AddSubscriptionAsync(subscription);
 
 
@@ -123,6 +129,12 @@ namespace ParkingLotManagementAPI.Controllers
 
             };
             return Ok(createdSubscriptionDTO);
+        }
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteSubscription(int id)
+        {
+            subscriptionRepository.DeleteSubscription(id);
+            return NoContent();
         }
     }
 }

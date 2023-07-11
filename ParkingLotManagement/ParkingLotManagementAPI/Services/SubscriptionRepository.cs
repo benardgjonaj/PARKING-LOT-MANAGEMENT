@@ -29,9 +29,14 @@ namespace ParkingLotManagementAPI.Services
             return false;
         }
 
-        public void DeleteSubscriptionr(int id)
+        public void DeleteSubscription(int id)
         {
-            throw new NotImplementedException();
+            var subscription = context.Subscriptions.Find(id);
+            if(subscription!= null)
+            {
+                subscription.IsDeleted= true;
+                context.SaveChanges();
+            }
         }
 
         public async Task<Subscription> GetSubscriptionAsync(int id)
@@ -47,8 +52,8 @@ namespace ParkingLotManagementAPI.Services
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 subscriptions = subscriptions.Where(s =>
-                    s.Subscriber.FirstName.Contains(searchQuery) ||
-                    s.Code.Contains(searchQuery));
+                    s.Subscriber.FirstName==searchQuery ||
+                    s.Code==searchQuery);
             }
 
              return await subscriptions.ToListAsync();    

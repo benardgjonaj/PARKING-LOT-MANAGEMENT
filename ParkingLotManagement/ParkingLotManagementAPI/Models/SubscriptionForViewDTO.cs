@@ -6,8 +6,6 @@ namespace ParkingLotManagementAPI.Models
     {
         [Required]
         public string Code { get; set; }
-        [Required]
-        public SubscriberForCreationDTO subscriberForCreationDTO { get; set; }
 
         [Required]
         public int SubscriberId { get; set; }

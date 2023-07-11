@@ -1,10 +1,14 @@
 ﻿using ParkingLotManagementAPI.Entities;
+using ParkingLotManagementAPI.Models;
 
 namespace ParkingLotManagementAPI.Services
 {
     public interface IParkingSpotRepository
     {
-        Task<ParkingSpot> GetParkingSpots();
-       
+        Task<ParkingSpotViewDTO> GetParkingSpotInfo();
+        Task<ParkingSpot> GetParkingSpot(int id);
+        Task<bool> SaveChangesAsync();
+
+
     }
 }

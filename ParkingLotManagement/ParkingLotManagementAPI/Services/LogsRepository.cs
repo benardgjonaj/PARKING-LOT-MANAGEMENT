@@ -46,18 +46,19 @@ namespace ParkingLotManagementAPI.Services
         }
         public decimal CalculatePrice(Logs log)
         {
-            if (log.SubscriptionId != null)
-            {
-                return 0;
-            }
+            
             
             decimal totalPrice = 0;
             int totalMin = (int)(log.CheckOutTime - log.CheckInTime).TotalMinutes;
             decimal totalHours= (decimal)totalMin /60;
             bool iswekeend = log.CheckInTime.DayOfWeek == DayOfWeek.Saturday || log.CheckInTime.DayOfWeek == DayOfWeek.Sunday;
             var pricingPlan =  context.PricingPlans.FirstOrDefault(p => p.Type.ToLower() == (iswekeend ? "weekend" : "weekday"));
+            if (log.SubscriptionId != null||totalMin<=15)
+            {
+                return 0;
+            }
 
-                if ((int)totalHours <= pricingPlan.MinimumHours)
+            if ((int)totalHours <= pricingPlan.MinimumHours)
                 {
                     totalPrice = totalHours * pricingPlan.HourlyPricing;
                 }
