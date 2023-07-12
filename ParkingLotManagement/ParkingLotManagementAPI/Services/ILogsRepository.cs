@@ -8,9 +8,13 @@ namespace ParkingLotManagementAPI.Services
         Task<IEnumerable<Logs>> GetLogsByDayAsync(DateTime day);
         Task AddLogAsync(Logs log);
 
-        void DeleteLog(int id);
+  
 
         public decimal CalculatePrice(Logs log);
+        Task<Logs> FindLogByCode(string code);
+        bool SuscriptionCheckedIn(int? subscriptionId);
+        bool ExistingCode(string code);
+        Task<bool> SaveChangesAsync();
 
     }
 }

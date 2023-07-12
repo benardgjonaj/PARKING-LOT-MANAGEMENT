@@ -56,35 +56,35 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(logsDTO);
         }
         [HttpPost]
-        public async Task<ActionResult<LogsForViewDTO>> CreateLog([FromBody] LogsDTO logsDTO)
+        public async Task<ActionResult<LogsForViewDTO>> CheckIn([FromBody] CheckInDTO logsDTO)
         {
             try
             {
-                var logEntity = new Logs
+
+                var log = new Logs
                 {
                     Code = logsDTO.Code,
-                    CheckInTime = logsDTO.CheckInTime,
-                    CheckOutTime = logsDTO.CheckOutTime,
+                    CheckInTime = DateTime.Now,
                     SubscriptionId = logsDTO.SubscriptionId,
 
                 };
-                var log = new Logs
+                if( logsRepository.ExistingCode(log.Code))
                 {
-                    Code = logEntity.Code,
-                    CheckInTime = logEntity.CheckInTime,
-                    CheckOutTime = logEntity.CheckOutTime,
-                    SubscriptionId = logEntity.SubscriptionId,
-                    Price = logsRepository.CalculatePrice(logEntity)
-                };
+                    return Conflict("This code is already checked in");
+                }
+                if (logsRepository.SuscriptionCheckedIn(log.SubscriptionId))
+                {
+                    return Conflict("Subscription already checked In ");
+                }
                 await logsRepository.AddLogAsync(log);
                 var createdLog = new LogsForViewDTO
                 {
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
-                    CheckOutTime = log.CheckOutTime,
                     SubscriptionId = log.SubscriptionId,
-                    Price = log.Price
+
                 };
+
                 return Ok(createdLog);
             }
             catch (Exception ex)
@@ -92,7 +92,31 @@ namespace ParkingLotManagementAPI.Controllers
 
                 return BadRequest(ex.Message);
             }
-            
+
+        }
+        [HttpPut("{code}")]
+        public async Task<ActionResult<LogsForViewDTO>> CheckOut( string code)
+        {
+            var log = await logsRepository.FindLogByCode(code);
+            if (log == null)
+            {
+                return NotFound();
+
+            }
+
+            log.CheckOutTime = DateTime.Now;
+            log.Price = logsRepository.CalculatePrice(log);
+            await logsRepository.SaveChangesAsync();
+            return Ok(new LogsForViewDTO
+            {
+                Code = log.Code,
+                SubscriptionId = log.SubscriptionId,
+                CheckInTime = log.CheckInTime, 
+                CheckOutTime = log.CheckOutTime,
+                Price = log.Price
+            });
+
+
         }
     }
 }

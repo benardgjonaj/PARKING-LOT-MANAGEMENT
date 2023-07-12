@@ -179,7 +179,7 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteSubscriber(int id)
         {
-            subscriberRepository.DeleteSubscriber(id);
+            subscriptionRepository.DeleteSubscription(id);
             return NoContent();
         }
     }

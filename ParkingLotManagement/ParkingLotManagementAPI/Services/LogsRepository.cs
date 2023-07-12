@@ -18,12 +18,6 @@ namespace ParkingLotManagementAPI.Services
             await context.SaveChangesAsync();
         }
 
-       
-
-        public void DeleteLog(int id)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<IEnumerable<Logs>> GetLogsAsync(string? searchQuery)
         {
@@ -76,6 +70,42 @@ namespace ParkingLotManagementAPI.Services
                     }
                 }
                 return totalPrice;
+            
+        }
+        public async Task<Logs> FindLogByCode(string code)
+        {
+            return await context.Logs.FirstOrDefaultAsync(l => l.Code == code);
+        }
+
+        public  bool ExistingCode(string code)
+        {
+            var existingLog =  context.Logs.FirstOrDefault(l => l.Code == code);
+            if(existingLog!= null)
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<bool> SaveChangesAsync()
+        {
+            return (await context.SaveChangesAsync() >= 0);
+        }
+
+        public bool SuscriptionCheckedIn(int? subscriptionId)
+        {
+            if (subscriptionId != null)
+            {
+                var log = context.Logs.Where(l => l.SubscriptionId == subscriptionId)
+                    .FirstOrDefault(l => l.CheckOutTime == DateTime.MinValue);
+
+                if (log != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            return false;
             
         }
     }

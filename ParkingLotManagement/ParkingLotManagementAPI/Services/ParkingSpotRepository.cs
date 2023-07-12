@@ -25,7 +25,14 @@ namespace ParkingLotManagementAPI.Services
             var parkingSpotInfo = new ParkingSpotViewDTO();
             parkingSpotInfo.TotalSpots = await context.ParkingSpots.SumAsync(ps => ps.TotalSpots);
             parkingSpotInfo.ReservedSpots = await context.Subscriptions.CountAsync(s => s.IsDeleted == false);
+
+            parkingSpotInfo.OccupiedReservedSpots = await context.Logs.CountAsync(s => s.Subscription != null && s.CheckOutTime == DateTime.MinValue);
+            parkingSpotInfo.FreeReservedSpots = parkingSpotInfo.ReservedSpots - parkingSpotInfo.OccupiedReservedSpots;
+
             parkingSpotInfo.RegularSpots = parkingSpotInfo.TotalSpots - parkingSpotInfo.ReservedSpots;
+            parkingSpotInfo.OccupiedRegularSpots = await context.Logs.CountAsync(l => l.SubscriptionId == null && l.CheckOutTime == DateTime.MinValue);
+
+            parkingSpotInfo.FreeRegularSpots = parkingSpotInfo.RegularSpots - parkingSpotInfo.OccupiedRegularSpots;
 
             return parkingSpotInfo;
 
