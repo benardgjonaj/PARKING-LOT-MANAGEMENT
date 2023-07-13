@@ -95,13 +95,17 @@ namespace ParkingLotManagementAPI.Controllers
 
         }
         [HttpPut("{code}")]
-        public async Task<ActionResult<LogsForViewDTO>> CheckOut( string code)
+        public async Task<ActionResult<LogsForViewDTO>> CheckOut(string code)
         {
             var log = await logsRepository.FindLogByCode(code);
             if (log == null)
             {
                 return NotFound();
 
+            }
+            if(log.CheckOutTime != DateTime.MinValue)
+            {
+                return Conflict("Code is already Checked Out");
             }
 
             log.CheckOutTime = DateTime.Now;
