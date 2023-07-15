@@ -12,7 +12,7 @@ using ParkingLotManagementAPI.Data;
 namespace ParkingLotManagementAPI.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20230703142154_initial")]
+    [Migration("20230715165542_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,12 +62,6 @@ namespace ParkingLotManagementAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("FreeSpots")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservedSpots")
-                        .HasColumnType("int");
 
                     b.Property<int>("TotalSpots")
                         .HasColumnType("int");
@@ -186,9 +180,11 @@ namespace ParkingLotManagementAPI.Migrations
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Logs", b =>
                 {
-                    b.HasOne("ParkingLotManagementAPI.Entities.Subscription", null)
+                    b.HasOne("ParkingLotManagementAPI.Entities.Subscription", "Subscription")
                         .WithMany("Logs")
                         .HasForeignKey("SubscriptionId");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Subscription", b =>

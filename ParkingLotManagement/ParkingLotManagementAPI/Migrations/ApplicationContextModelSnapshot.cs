@@ -61,12 +61,6 @@ namespace ParkingLotManagementAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("FreeSpots")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ReservedSpots")
-                        .HasColumnType("int");
-
                     b.Property<int>("TotalSpots")
                         .HasColumnType("int");
 
@@ -184,9 +178,11 @@ namespace ParkingLotManagementAPI.Migrations
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Logs", b =>
                 {
-                    b.HasOne("ParkingLotManagementAPI.Entities.Subscription", null)
+                    b.HasOne("ParkingLotManagementAPI.Entities.Subscription", "Subscription")
                         .WithMany("Logs")
                         .HasForeignKey("SubscriptionId");
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Subscription", b =>

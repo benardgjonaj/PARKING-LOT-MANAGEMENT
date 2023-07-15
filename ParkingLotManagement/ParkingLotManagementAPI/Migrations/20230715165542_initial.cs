@@ -15,9 +15,7 @@ namespace ParkingLotManagementAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TotalSpots = table.Column<int>(type: "int", nullable: false),
-                    FreeSpots = table.Column<int>(type: "int", nullable: false),
-                    ReservedSpots = table.Column<int>(type: "int", nullable: false)
+                    TotalSpots = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
