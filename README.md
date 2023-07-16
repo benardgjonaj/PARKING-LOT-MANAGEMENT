@@ -1,2 +1,3 @@
 # PARKING LOT MANAGEMENT
  
+ParkingLotManagement Web API (C#, ASP.Net Core Web API ,Entity Framework): Developed  a web API  for the Parking Lot Management that offers a comprehensive solution for managing a parking lot efficiently. By providing functionalities for parking spot management, pricing plan customization, subscriber and subscription management, as well as daily log tracking, when cars can check in and check out this API streamlines operations, automates processes, and enhances the overall efficiency of your parking lot management system.Using .net framework sql server to store data also implementing reporitory pattern and dependency injection  for better flexibility and extensibility. I used Postman and swager for testing API
