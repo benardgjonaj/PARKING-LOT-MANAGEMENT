@@ -28,6 +28,7 @@ namespace ParkingLotManagementAPI.Controllers
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
                     CheckOutTime = log.CheckOutTime,
+                    //CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
                     Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
 
@@ -47,14 +48,34 @@ namespace ParkingLotManagementAPI.Controllers
                 {
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
-                    CheckOutTime = log.CheckOutTime,
-                    Price = log.Price,
+                    CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
+                Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
 
                 });
             }
             return Ok(logsDTO);
         }
+        //[HttpGet("{date}")]
+        //public async Task<ActionResult<LogsForViewDTO>> GetLogByDate(DateTime date)
+        //{
+
+        //    var log = await logsRepository.GetLogByDateAsync(date);
+        //    var logsDTO = new LogsForViewDTO()
+        //    {
+        //        Code = log.Code,
+        //        CheckInTime = log.CheckInTime,
+        //        CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
+        //        Price = log.Price,
+        //        SubscriptionId = log.SubscriptionId,
+        //    };
+           
+            
+              
+            
+        //    return Ok(logsDTO);
+        //}
+
         [HttpPost]
         public async Task<ActionResult<LogsForViewDTO>> CheckIn([FromBody] CheckInDTO logsDTO)
         {
@@ -63,8 +84,8 @@ namespace ParkingLotManagementAPI.Controllers
 
                 var log = new Logs
                 {
-                    Code = logsDTO.Code,
-                    CheckInTime = DateTime.Now,
+                    Code = Guid.NewGuid().ToString("N").Substring(0, 8),
+                CheckInTime = DateTime.Now,
                     SubscriptionId = logsDTO.SubscriptionId,
 
                 };
@@ -115,7 +136,7 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 Code = log.Code,
                 SubscriptionId = log.SubscriptionId,
-                CheckInTime = log.CheckInTime, 
+                CheckInTime = log.CheckInTime,
                 CheckOutTime = log.CheckOutTime,
                 Price = log.Price
             });

@@ -36,7 +36,7 @@ namespace ParkingLotManagementAPI.Services
 
         public async Task<IEnumerable<Logs>> GetLogsByDayAsync(DateTime day)
         {
-           return await context.Logs.Where(l=>l.CheckInTime==day).ToListAsync();
+           return await context.Logs.Where(l=>l.CheckInTime.Date==day.Date).ToListAsync();
         }
         public decimal CalculatePrice(Logs log)
         {
@@ -107,6 +107,11 @@ namespace ParkingLotManagementAPI.Services
 
             return false;
             
+        }
+
+        public async Task<Logs> GetLogByDateAsync(DateTime date)
+        {
+            return await context.Logs.FirstOrDefaultAsync(l=>l.CheckInTime == date); 
         }
     }
 }
