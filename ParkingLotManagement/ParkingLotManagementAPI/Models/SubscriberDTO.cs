@@ -19,8 +19,7 @@ namespace ParkingLotManagementAPI.Models
         public DateTime Birthday { get; set; }
         [Required]
         public string PlateNumber { get; set; }
-        [Required]
-        public bool IsDeleted { get; set; }
+      
         [Required]
         public SubscriptionForCreationDTO subscriptionForCreationDTO { get; set; }
     }

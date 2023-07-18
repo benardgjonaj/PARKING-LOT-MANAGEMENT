@@ -4,8 +4,7 @@ namespace ParkingLotManagementAPI.Models
 {
     public class SubscriptionForCreationDTO
     {
-        [Required]
-        public string Code { get; set; }
+       
        
         [Required]
         public decimal Price { get; set; }
@@ -15,7 +14,6 @@ namespace ParkingLotManagementAPI.Models
         public DateTime StartDate { get; set; }
         [Required]
         public DateTime EndDate { get; set; }
-        [Required]
-        public bool IsDeleted { get; set; }
+        
     }
 }

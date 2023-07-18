@@ -27,8 +27,8 @@ namespace ParkingLotManagementAPI.Controllers
                 {
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
-                    CheckOutTime = log.CheckOutTime,
-                    //CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
+                    //CheckOutTime = log.CheckOutTime,
+                    CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
                     Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
 
@@ -56,25 +56,27 @@ namespace ParkingLotManagementAPI.Controllers
             }
             return Ok(logsDTO);
         }
-        //[HttpGet("{date}")]
-        //public async Task<ActionResult<LogsForViewDTO>> GetLogByDate(DateTime date)
-        //{
+        [HttpGet("code/{code}")]
+        public async Task<ActionResult<LogsForViewDTO>> GetLogByCode(string code)
+        {
+            var log = await logsRepository.GetLogByCodeAsync(code);
+            if (log == null)
+            {
+                return NotFound();  
+            }
 
-        //    var log = await logsRepository.GetLogByDateAsync(date);
-        //    var logsDTO = new LogsForViewDTO()
-        //    {
-        //        Code = log.Code,
-        //        CheckInTime = log.CheckInTime,
-        //        CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
-        //        Price = log.Price,
-        //        SubscriptionId = log.SubscriptionId,
-        //    };
-           
+            var logsDTO = new LogsForViewDTO()         
+                
+               {
+                    Code = log.Code,
+                    CheckInTime = log.CheckInTime,
+                    CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
+                    Price = log.Price,
+                    SubscriptionId = log.SubscriptionId,
+                };
             
-              
-            
-        //    return Ok(logsDTO);
-        //}
+            return Ok(logsDTO);
+        }
 
         [HttpPost]
         public async Task<ActionResult<LogsForViewDTO>> CheckIn([FromBody] CheckInDTO logsDTO)

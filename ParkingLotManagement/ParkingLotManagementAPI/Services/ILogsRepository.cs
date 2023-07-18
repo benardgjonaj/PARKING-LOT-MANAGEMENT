@@ -7,6 +7,7 @@ namespace ParkingLotManagementAPI.Services
         Task<IEnumerable<Logs>> GetLogsAsync(string? searchQuery);
         Task<IEnumerable<Logs>> GetLogsByDayAsync(DateTime day);
       Task<Logs>  GetLogByDateAsync(DateTime date);
+        Task<Logs> GetLogByCodeAsync(string code);
         Task AddLogAsync(Logs log);
 
   

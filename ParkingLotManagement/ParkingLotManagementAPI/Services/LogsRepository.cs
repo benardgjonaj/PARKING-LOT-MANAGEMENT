@@ -113,5 +113,10 @@ namespace ParkingLotManagementAPI.Services
         {
             return await context.Logs.FirstOrDefaultAsync(l=>l.CheckInTime == date); 
         }
+
+        public async Task<Logs> GetLogByCodeAsync(string code)
+        {
+            return await context.Logs.FirstOrDefaultAsync(l => l.Code == code);
+        }
     }
 }

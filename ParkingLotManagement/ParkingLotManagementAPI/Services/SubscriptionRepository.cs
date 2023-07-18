@@ -19,6 +19,14 @@ namespace ParkingLotManagementAPI.Services
             await context.SaveChangesAsync();   
         }
 
+        public decimal CalculatePrice(DateTime start, DateTime end)
+        {
+            TimeSpan duration = end.Subtract(start);
+            int days = duration.Days;
+            decimal price = context.PricingPlans.FirstOrDefault(p => p.Type == "weekday").DailyPricing;
+            return days* price;
+        }
+
         public async Task<bool> CodeExistAsync(string code)
         {
             var existingSubscription=await context.Subscriptions.FirstOrDefaultAsync(s=>s.Code == code);

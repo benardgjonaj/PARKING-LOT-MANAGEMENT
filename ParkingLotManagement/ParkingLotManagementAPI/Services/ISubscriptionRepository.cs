@@ -10,6 +10,7 @@ namespace ParkingLotManagementAPI.Services
 
         void DeleteSubscription(int id);
         Task<bool> CodeExistAsync(string code);
+        public decimal CalculatePrice(DateTime start, DateTime end);
         Task<bool> SaveChangesAsync();
     }
 }

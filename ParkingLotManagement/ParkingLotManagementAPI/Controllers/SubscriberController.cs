@@ -34,6 +34,7 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 subscribersDto.Add(new SubscriberForCreationDTO
                 {
+                    Id = subscriber.Id,
                     FirstName = subscriber.FirstName,
                     LastName = subscriber.LastName,
                     PhoneNumber = subscriber.PhoneNumber,
@@ -57,6 +58,7 @@ namespace ParkingLotManagementAPI.Controllers
             }
             var subscriberDTO = new SubscriberForCreationDTO
             {
+                Id = subscriber.Id,
                 FirstName = subscriber.FirstName,
                 LastName = subscriber.LastName,
                 Birthday = subscriber.Birthday,
@@ -70,7 +72,7 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(subscriberDTO);
         }
         [HttpPost]
-        public async Task<ActionResult<SubscriberDTO>> CreateSubscriber([FromBody] SubscriberDTO subscriberDTO)
+        public async Task<ActionResult<SubscriberForViewDTO>> CreateSubscriber([FromBody] SubscriberDTO subscriberDTO)
         {
             
             var subscriberDetails = subscriberDTO;
@@ -87,7 +89,7 @@ namespace ParkingLotManagementAPI.Controllers
                 PhoneNumber=subscriberDetails.PhoneNumber,
                 Birthday=subscriberDetails.Birthday,
                 PlateNumber=subscriberDetails.PlateNumber,
-                IsDeleted=subscriberDetails.IsDeleted,
+                IsDeleted=false,
                 
             };
 
@@ -99,13 +101,14 @@ namespace ParkingLotManagementAPI.Controllers
                 StartDate = subscriptionDetails.StartDate,
                 EndDate = subscriptionDetails.EndDate,
                DiscountValue=subscriptionDetails.DiscountValue,
-               Price=subscriptionDetails.Price,
-               Code=subscriptionDetails.Code,
-               IsDeleted=subscriptionDetails.IsDeleted,
+               
+                Code = Guid.NewGuid().ToString("N").Substring(0,6).ToUpper(),
+                IsDeleted = false,
               
             };
-           
 
+            subscription.Price = subscriptionRepository.
+                CalculatePrice(subscription.StartDate, subscription.EndDate) - subscription.DiscountValue;
        
             subscriber.Subscription = subscription;
 
@@ -122,32 +125,22 @@ namespace ParkingLotManagementAPI.Controllers
 
             await subscriberRepository.AddSubcriberAsync(subscriber);
 
-          
-          
 
-           
-            var createdSubscriberDTO = new SubscriberDTO
+
+
+
+            var createdSubscriberDTO = new SubscriberForViewDTO
             {
-            
-               
+
+
                 FirstName = subscriber.FirstName,
-                LastName= subscriber.LastName,
-                PhoneNumber= subscriber.PhoneNumber,
+                LastName = subscriber.LastName,
+                PhoneNumber = subscriber.PhoneNumber,
                 Email = subscriber.Email,
-                IdCardNumber=subscriber.IdCardNumber,
-                PlateNumber=subscriber.PlateNumber,
-                IsDeleted=subscriber.IsDeleted,
-                Birthday= subscriber.Birthday,
-                subscriptionForCreationDTO = new SubscriptionForCreationDTO
-                {
-                
-                    StartDate = subscription.StartDate,
-                    EndDate = subscription.EndDate,
-                    DiscountValue= subscription.DiscountValue,
-                    Price=subscription.Price,
-                    Code= subscription.Code,
-                    IsDeleted=subscription.IsDeleted
-                }
+                IdCardNumber = subscriber.IdCardNumber,
+                PlateNumber = subscriber.PlateNumber,
+                Birthday = subscriber.Birthday,
+                SubscriptionID = subscriber.Subscription.Id
             };
 
             
