@@ -131,10 +131,19 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(createdSubscriptionDTO);
         }
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteSubscription(int id)
+        public async Task<ActionResult<int>> DeleteSubscription(int id)
         {
-            subscriptionRepository.DeleteSubscription(id);
-            return NoContent();
+           bool isDeleted= subscriptionRepository.DeleteSubscription(id);
+            if (isDeleted)
+            {
+
+                return Ok(id);
+            }
+            else
+            {
+
+                return NotFound();
+            }
         }
     }
 }

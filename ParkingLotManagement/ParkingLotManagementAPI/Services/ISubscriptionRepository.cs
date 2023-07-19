@@ -8,7 +8,7 @@ namespace ParkingLotManagementAPI.Services
         Task<IEnumerable<Subscription>> GetSubscriptionsAsync(string? searchQuery);
         Task<Subscription> GetSubscriptionAsync(int id);
 
-        void DeleteSubscription(int id);
+        bool DeleteSubscription(int id);
         Task<bool> CodeExistAsync(string code);
         public decimal CalculatePrice(DateTime start, DateTime end);
         Task<bool> SaveChangesAsync();

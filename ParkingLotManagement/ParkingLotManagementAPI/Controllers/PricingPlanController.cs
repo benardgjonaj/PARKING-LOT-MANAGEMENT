@@ -55,7 +55,7 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(pricingPlaningDTO);
         }
         [HttpPut("{type}")]
-        public async Task< ActionResult> UpdatePricingPlan(string type, 
+        public async Task< ActionResult<PricingPlanDTO>> UpdatePricingPlan(string type, 
             [FromBody] PricingPlanForUpdateDTO updatedPricingPlanDTO)
         {
             var pricePlaningEntity=await pricingPlanRepository.GetPricingPlanAsync(type);
@@ -69,8 +69,15 @@ namespace ParkingLotManagementAPI.Controllers
             pricePlaningEntity.HourlyPricing = updatedPricingPlanDTO.HourlyPricing;
             
             await pricingPlanRepository.SaveChangesAsync();
+            var updatedPricingPlan = new PricingPlanDTO
+            {
+                Type = pricePlaningEntity.Type,
+                MinimumHours = pricePlaningEntity.MinimumHours,
+                DailyPricing = pricePlaningEntity.DailyPricing,
+                HourlyPricing = pricePlaningEntity.HourlyPricing,
+            };
 
-            return NoContent();
+            return Ok(updatedPricingPlan);
 
         }
 
