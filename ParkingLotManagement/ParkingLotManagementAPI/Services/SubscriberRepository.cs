@@ -47,7 +47,10 @@ namespace ParkingLotManagementAPI.Services
             {
                 subscriber.IsDeleted = true;
                var  subscription= context.Subscriptions.Find(subscriber.Id);
-                subscription.IsDeleted = true;
+                if (subscription != null)
+                {
+                    subscription.IsDeleted = true;
+                }
                 context.SaveChanges();
             }
         }

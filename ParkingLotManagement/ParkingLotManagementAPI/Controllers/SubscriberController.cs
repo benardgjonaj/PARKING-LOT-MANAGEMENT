@@ -147,7 +147,7 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(createdSubscriberDTO);
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateSubscriber(int id,
+        public async Task<ActionResult<SubscriberForUpdateDTO>> UpdateSubscriber(int id,
           [FromBody] SubscriberForUpdateDTO updatedSubscriberDTO)
         {
             var subscriber = await subscriberRepository.GetSubcriberAsync(id);
@@ -165,7 +165,20 @@ namespace ParkingLotManagementAPI.Controllers
             subscriber.IsDeleted = updatedSubscriberDTO.IsDeleted;
             subscriber.PlateNumber=updatedSubscriberDTO.PlateNumber;
             await subscriberRepository.SaveChangesAsync();
-            return NoContent();
+
+            var updatedSubscriber = new SubscriberForUpdateDTO
+            {
+                FirstName = subscriber.FirstName,
+                LastName = subscriber.LastName,
+                PhoneNumber = subscriber.PhoneNumber,
+                Email = subscriber.Email,
+                IdCardNumber = subscriber.IdCardNumber,
+                Birthday = subscriber.Birthday,
+                IsDeleted = subscriber.IsDeleted,
+                PlateNumber = subscriber.PlateNumber,
+
+            };
+            return Ok(updatedSubscriber);
 
         }
 
