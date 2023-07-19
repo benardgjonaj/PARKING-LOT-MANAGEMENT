@@ -132,7 +132,7 @@ namespace ParkingLotManagementAPI.Controllers
             var createdSubscriberDTO = new SubscriberForViewDTO
             {
 
-
+                Id = subscriber.Id,
                 FirstName = subscriber.FirstName,
                 LastName = subscriber.LastName,
                 PhoneNumber = subscriber.PhoneNumber,
