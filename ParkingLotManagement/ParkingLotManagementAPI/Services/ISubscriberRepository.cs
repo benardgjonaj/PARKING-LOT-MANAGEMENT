@@ -8,7 +8,7 @@ namespace ParkingLotManagementAPI.Services
         Task <IEnumerable<Subscriber>> GetSubcribersAsync(string? searchQuery);
         Task<Subscriber> GetSubcriberAsync(int id);
        
-        void DeleteSubscriber(int id);
+        bool DeleteSubscriber(int id);
         Task<bool> IdCarNumberExistAsync(string idCardNumber);
         Task<bool> SaveChangesAsync();
 

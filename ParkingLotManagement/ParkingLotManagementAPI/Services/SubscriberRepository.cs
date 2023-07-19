@@ -40,7 +40,7 @@ namespace ParkingLotManagementAPI.Services
             context.SaveChanges();
         }
 
-        public void DeleteSubscriber(int id)
+        public bool DeleteSubscriber(int id)
         {
             var subscriber = context.Subscribers.Find(id);
             if (subscriber != null)
@@ -52,7 +52,9 @@ namespace ParkingLotManagementAPI.Services
                     subscription.IsDeleted = true;
                 }
                 context.SaveChanges();
+                return true;
             }
+            return false;
         }
 
         public  async Task<bool>  IdCarNumberExistAsync(string idCardNumber)
