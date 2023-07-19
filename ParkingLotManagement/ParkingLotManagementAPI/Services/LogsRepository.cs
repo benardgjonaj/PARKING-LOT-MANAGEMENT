@@ -24,9 +24,9 @@ namespace ParkingLotManagementAPI.Services
            var logs= context.Logs.AsQueryable();
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                logs = logs.Where(l => l.Code.Contains(searchQuery) ||
+                logs = logs.Where(l => l.Code==searchQuery ||
                 (l.SubscriptionId!=null&&
-                l.Subscription.Subscriber.FirstName.Contains(searchQuery)));
+                l.Subscription.Subscriber.FirstName==searchQuery));
                 
                     
             }

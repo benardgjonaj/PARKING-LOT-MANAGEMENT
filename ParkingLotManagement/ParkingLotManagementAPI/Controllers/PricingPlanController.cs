@@ -56,14 +56,14 @@ namespace ParkingLotManagementAPI.Controllers
         }
         [HttpPut("{type}")]
         public async Task< ActionResult> UpdatePricingPlan(string type, 
-            [FromBody] PricingPlan updatedPricingPlanDTO)
+            [FromBody] PricingPlanForUpdateDTO updatedPricingPlanDTO)
         {
             var pricePlaningEntity=await pricingPlanRepository.GetPricingPlanAsync(type);
             if (pricePlaningEntity == null)
             {
                 return NotFound();
             }
-            pricePlaningEntity.Type = updatedPricingPlanDTO.Type;
+            
             pricePlaningEntity.MinimumHours = updatedPricingPlanDTO.MinimumHours;
             pricePlaningEntity.DailyPricing = updatedPricingPlanDTO.DailyPricing;
             pricePlaningEntity.HourlyPricing = updatedPricingPlanDTO.HourlyPricing;
