@@ -5,6 +5,8 @@ namespace ParkingLotManagementAPI.Models
     public class SubscriptionForViewDTO
     {
         [Required]
+        public int Id { get; set; }
+        [Required]
         public string Code { get; set; }
 
         [Required]

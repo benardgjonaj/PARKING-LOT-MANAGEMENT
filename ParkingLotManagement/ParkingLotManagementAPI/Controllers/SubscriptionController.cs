@@ -28,6 +28,7 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 subscriptionsDTO.Add(new SubscriptionForViewDTO
                 {
+                    Id= subscription.Id,
                     Code = subscription.Code,
                     SubscriberId = subscription.SubscriberId,
                     Price = subscription.Price,
@@ -51,6 +52,7 @@ namespace ParkingLotManagementAPI.Controllers
             }
             var subscriptionDTO = new SubscriptionForViewDTO
             {
+                Id= subscription.Id,
                 Code = subscription.Code,
                 SubscriberId = subscription.SubscriberId,
                 Price = subscription.Price,
@@ -102,6 +104,7 @@ namespace ParkingLotManagementAPI.Controllers
 
             var createdSubscriptionDTO = new SubscriptionForViewDTO
             {
+                Id= subscription.Id,
                 Code = subscription.Code,
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,
