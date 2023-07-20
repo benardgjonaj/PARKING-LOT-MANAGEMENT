@@ -16,8 +16,8 @@ namespace ParkingLotManagementAPI.Services
 
         public async Task<ParkingSpot> GetParkingSpot(int id)
         {
-           return await context.ParkingSpots.FirstOrDefaultAsync(p=>p.Id==id);
-            
+            return await context.ParkingSpots.FirstOrDefaultAsync(p => p.Id == id);
+
         }
 
         public async Task<ParkingSpotViewDTO> GetParkingSpotInfo()

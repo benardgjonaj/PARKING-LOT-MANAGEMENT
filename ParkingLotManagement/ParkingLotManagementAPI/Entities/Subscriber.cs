@@ -11,6 +11,6 @@
         public DateTime Birthday { get; set; }
         public string PlateNumber { get; set; }
         public bool IsDeleted { get; set; }
-        public Subscription Subscription { get; set; }
+        public List<Subscription> Subscriptions { get; set; }=new List<Subscription>();
     }
 }

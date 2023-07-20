@@ -16,7 +16,7 @@ namespace ParkingLotManagementAPI.Services
         public async Task AddSubscriptionAsync(Subscription subscription)
         {
             await context.Subscriptions.AddAsync(subscription);
-            await context.SaveChangesAsync();   
+            await context.SaveChangesAsync();
         }
 
         public decimal CalculatePrice(DateTime start, DateTime end)
@@ -24,12 +24,12 @@ namespace ParkingLotManagementAPI.Services
             TimeSpan duration = end.Subtract(start);
             int days = duration.Days;
             decimal price = context.PricingPlans.FirstOrDefault(p => p.Type == "weekday").DailyPricing;
-            return days* price;
+            return days * price;
         }
 
         public async Task<bool> CodeExistAsync(string code)
         {
-            var existingSubscription=await context.Subscriptions.FirstOrDefaultAsync(s=>s.Code == code);
+            var existingSubscription = await context.Subscriptions.FirstOrDefaultAsync(s => s.Code == code);
             if (existingSubscription != null)
             {
                 return true;
@@ -40,9 +40,9 @@ namespace ParkingLotManagementAPI.Services
         public bool DeleteSubscription(int id)
         {
             var subscription = context.Subscriptions.Find(id);
-            if(subscription!= null)
+            if (subscription != null)
             {
-                subscription.IsDeleted= true;
+                subscription.IsDeleted = true;
                 context.SaveChanges();
                 return true;
             }
@@ -51,22 +51,43 @@ namespace ParkingLotManagementAPI.Services
 
         public async Task<Subscription> GetSubscriptionAsync(int id)
         {
-            return await context.Subscriptions.Where(s=>s.IsDeleted==false)
-                .FirstOrDefaultAsync(s=>s.Id == id);
+            return await context.Subscriptions.Where(s => s.IsDeleted == false)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
-
+        public async Task<Subscription> GetSubscriptionIncludedDeletedAsync(int id)
+        {
+            return await context.Subscriptions
+                .FirstOrDefaultAsync(s => s.Id == id);
+        }
         public async Task<IEnumerable<Subscription>> GetSubscriptionsAsync(string? searchQuery)
         {
-            var subscriptions =  context.Subscriptions.Where(s => s.IsDeleted == false)
-                .Include(s=>s.Subscriber).AsQueryable();
+            var query =  context.Subscriptions.Where(s=>s.IsDeleted==false).AsQueryable();
+            var subscribers=new List<Subscriber>(); 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                subscriptions = subscriptions.Where(s =>
-                    s.Subscriber.FirstName==searchQuery ||
-                    s.Code==searchQuery);
+                query = query.Where(sub =>
+                    sub.Code== searchQuery
+                );
+                subscribers = context.Subscribers.Where(s => s.FirstName == searchQuery).
+                    Include(s => s.Subscriptions.Where(s=>s.IsDeleted==false)).ToList();
             }
+            var listofsubscriptions=query.ToList();
+           
+            foreach (var subscriber in subscribers)
+            {
+               foreach (var subscription in subscriber.Subscriptions)
+                {
+                    listofsubscriptions.Add(subscription);
+                }
 
-             return await subscriptions.ToListAsync();    
+            }
+            return listofsubscriptions;
+        }
+
+        public async Task<IEnumerable<Subscription>> GetSubscriptionsBySubscriberIdAsync(int id)
+        {
+            var subscriprions=await context.Subscriptions.Where(s=>s.SubscriberId==id).ToListAsync();
+            return subscriprions;
         }
 
         public async Task<bool> SaveChangesAsync()

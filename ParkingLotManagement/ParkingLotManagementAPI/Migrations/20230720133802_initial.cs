@@ -113,8 +113,7 @@ namespace ParkingLotManagementAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Subscriptions_SubscriberId",
                 table: "Subscriptions",
-                column: "SubscriberId",
-                unique: true);
+                column: "SubscriberId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -15,7 +15,7 @@ namespace ParkingLotManagementAPI.Controllers
         private readonly ISubscriberRepository subscriberRepository;
         private readonly ISubscriptionRepository subscriptionRepository;
 
-        public SubscriberController(ISubscriberRepository subscriberRepository,ISubscriptionRepository subscriptionRepository)
+        public SubscriberController(ISubscriberRepository subscriberRepository, ISubscriptionRepository subscriptionRepository)
         {
             this.subscriberRepository = subscriberRepository;
             this.subscriptionRepository = subscriptionRepository;
@@ -42,7 +42,7 @@ namespace ParkingLotManagementAPI.Controllers
                     IdCardNumber = subscriber.IdCardNumber,
                     PlateNumber = subscriber.PlateNumber,
                     Birthday = subscriber.Birthday,
-                    IsDeleted=subscriber.IsDeleted,
+                    IsDeleted = subscriber.IsDeleted,
                 });
             }
 
@@ -51,7 +51,7 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriberForCreationDTO>> GetSubcriber(int id)
         {
-            var subscriber= await subscriberRepository.GetSubcriberAsync(id);
+            var subscriber = await subscriberRepository.GetSubcriberAsync(id);
             if (subscriber == null)
             {
                 return NotFound();
@@ -66,7 +66,7 @@ namespace ParkingLotManagementAPI.Controllers
                 PhoneNumber = subscriber.PhoneNumber,
                 Email = subscriber.Email,
                 PlateNumber = subscriber.PlateNumber,
-                IsDeleted=subscriber.IsDeleted,
+                IsDeleted = subscriber.IsDeleted,
             };
 
             return Ok(subscriberDTO);
@@ -74,54 +74,51 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<SubscriberForViewDTO>> CreateSubscriber([FromBody] SubscriberDTO subscriberDTO)
         {
-            
+
             var subscriberDetails = subscriberDTO;
             var subscriptionDetails = subscriberDTO.subscriptionForCreationDTO;
 
-           
+
             var subscriber = new Subscriber
             {
-              
-               FirstName=subscriberDetails.FirstName,
-               LastName=subscriberDetails.LastName,
+
+                FirstName = subscriberDetails.FirstName,
+                LastName = subscriberDetails.LastName,
                 Email = subscriberDetails.Email,
-                IdCardNumber= subscriberDetails.IdCardNumber,
-                PhoneNumber=subscriberDetails.PhoneNumber,
-                Birthday=subscriberDetails.Birthday,
-                PlateNumber=subscriberDetails.PlateNumber,
-                IsDeleted=false,
-                
+                IdCardNumber = subscriberDetails.IdCardNumber,
+                PhoneNumber = subscriberDetails.PhoneNumber,
+                Birthday = subscriberDetails.Birthday,
+                PlateNumber = subscriberDetails.PlateNumber,
+                IsDeleted = false,
+
             };
 
-           
+
             var subscription = new Subscription
             {
-                
-              
+
+
                 StartDate = subscriptionDetails.StartDate,
                 EndDate = subscriptionDetails.EndDate,
-               DiscountValue=subscriptionDetails.DiscountValue,
-               
-                Code = Guid.NewGuid().ToString("N").Substring(0,6).ToUpper(),
+                DiscountValue = subscriptionDetails.DiscountValue,
+
+                Code = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper(),
                 IsDeleted = false,
-              
+
             };
 
             subscription.Price = subscriptionRepository.
                 CalculatePrice(subscription.StartDate, subscription.EndDate) - subscription.DiscountValue;
-       
-            subscriber.Subscription = subscription;
 
-           
+            subscriber.Subscriptions.Add(subscription);
+
+
 
             if (await subscriberRepository.IdCarNumberExistAsync(subscriber.IdCardNumber))
             {
                 return Conflict("A subscriber with the same ID card number already exists.");
             }
-            if (await subscriptionRepository.CodeExistAsync(subscriber.Subscription.Code))
-            {
-                return Conflict("A subscription with the same Code  number already exists.");
-            }
+            
 
             await subscriberRepository.AddSubcriberAsync(subscriber);
 
@@ -140,41 +137,40 @@ namespace ParkingLotManagementAPI.Controllers
                 IdCardNumber = subscriber.IdCardNumber,
                 PlateNumber = subscriber.PlateNumber,
                 Birthday = subscriber.Birthday,
-                SubscriptionID = subscriber.Subscription.Id
+                
             };
 
-            
+
             return Ok(createdSubscriberDTO);
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<SubscriberForUpdateDTO>> UpdateSubscriber(int id,
+        public async Task<ActionResult<SubscriberForViewDTO>> UpdateSubscriber(int id,
           [FromBody] SubscriberForUpdateDTO updatedSubscriberDTO)
         {
             var subscriber = await subscriberRepository.GetSubcriberAsync(id);
-            if(subscriber == null)
+            if (subscriber == null)
             {
                 return NotFound();
             }
 
-            subscriber.FirstName= updatedSubscriberDTO.FirstName;
-            subscriber.LastName= updatedSubscriberDTO.LastName;
-            subscriber.PhoneNumber= updatedSubscriberDTO.PhoneNumber;
-            subscriber.Email= updatedSubscriberDTO.Email;
-            subscriber.IdCardNumber= updatedSubscriberDTO.IdCardNumber;
-            subscriber.Birthday= updatedSubscriberDTO.Birthday;
-            subscriber.IsDeleted = updatedSubscriberDTO.IsDeleted;
-            subscriber.PlateNumber=updatedSubscriberDTO.PlateNumber;
+            subscriber.FirstName = updatedSubscriberDTO.FirstName;
+            subscriber.LastName = updatedSubscriberDTO.LastName;
+            subscriber.PhoneNumber = updatedSubscriberDTO.PhoneNumber;
+            subscriber.Email = updatedSubscriberDTO.Email;
+            subscriber.IdCardNumber = updatedSubscriberDTO.IdCardNumber;
+            subscriber.Birthday = updatedSubscriberDTO.Birthday;
+            subscriber.PlateNumber = updatedSubscriberDTO.PlateNumber;
             await subscriberRepository.SaveChangesAsync();
 
-            var updatedSubscriber = new SubscriberForUpdateDTO
+            var updatedSubscriber = new SubscriberForViewDTO
             {
+                Id = subscriber.Id,
                 FirstName = subscriber.FirstName,
                 LastName = subscriber.LastName,
                 PhoneNumber = subscriber.PhoneNumber,
                 Email = subscriber.Email,
                 IdCardNumber = subscriber.IdCardNumber,
                 Birthday = subscriber.Birthday,
-                IsDeleted = subscriber.IsDeleted,
                 PlateNumber = subscriber.PlateNumber,
 
             };
@@ -189,12 +185,12 @@ namespace ParkingLotManagementAPI.Controllers
 
             if (isDeleted)
             {
-         
+
                 return Ok(id);
             }
             else
             {
-               
+
                 return NotFound();
             }
         }

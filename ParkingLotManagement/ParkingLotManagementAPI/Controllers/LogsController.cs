@@ -11,16 +11,20 @@ namespace ParkingLotManagementAPI.Controllers
     public class LogsController : ControllerBase
     {
         private readonly ILogsRepository logsRepository;
+        private readonly ISubscriptionRepository subscriptionRepository;
 
-        public LogsController(ILogsRepository logsRepository)
+        public ISubscriptionRepository SubscriptionRepository { get; }
+
+        public LogsController(ILogsRepository logsRepository, ISubscriptionRepository subscriptionRepository)
         {
             this.logsRepository = logsRepository;
+           this.subscriptionRepository = subscriptionRepository;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LogsForViewDTO>>> GetLogs(string? searchQuery)
         {
             var logs = await logsRepository.GetLogsAsync(searchQuery);
-            var logsDTO=new List<LogsForViewDTO>();
+            var logsDTO = new List<LogsForViewDTO>();
             foreach (var log in logs)
             {
                 logsDTO.Add(new LogsForViewDTO
@@ -49,7 +53,7 @@ namespace ParkingLotManagementAPI.Controllers
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
                     CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
-                Price = log.Price,
+                    Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
 
                 });
@@ -62,19 +66,19 @@ namespace ParkingLotManagementAPI.Controllers
             var log = await logsRepository.GetLogByCodeAsync(code);
             if (log == null)
             {
-                return NotFound();  
+                return NotFound();
             }
 
-            var logsDTO = new LogsForViewDTO()         
-                
-               {
-                    Code = log.Code,
-                    CheckInTime = log.CheckInTime,
-                    CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
-                    Price = log.Price,
-                    SubscriptionId = log.SubscriptionId,
-                };
-            
+            var logsDTO = new LogsForViewDTO()
+
+            {
+                Code = log.Code,
+                CheckInTime = log.CheckInTime,
+                CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
+                Price = log.Price,
+                SubscriptionId = log.SubscriptionId,
+            };
+
             return Ok(logsDTO);
         }
 
@@ -83,32 +87,68 @@ namespace ParkingLotManagementAPI.Controllers
         {
             try
             {
-
-                var log = new Logs
+                if (logsDTO.SubscriptionId == null)
                 {
-                    Code = Guid.NewGuid().ToString("N").Substring(0, 8),
-                CheckInTime = DateTime.Now,
-                    SubscriptionId = logsDTO.SubscriptionId,
+                    // If SubscriptionId is null, create a log without associating it with any subscription
+                    var log = new Logs
+                    {
+                        Code = Guid.NewGuid().ToString("N").Substring(0, 8),
+                        CheckInTime = DateTime.Now,
+                    };
 
-                };
-                if( logsRepository.ExistingCode(log.Code))
-                {
-                    return Conflict("This code is already checked in");
+                    await logsRepository.AddLogAsync(log);
+
+                    var createdLog = new LogsForViewDTO
+                    {
+                        Code = log.Code,
+                        CheckInTime = log.CheckInTime,
+                        SubscriptionId = null,
+                    };
+
+                    return Ok(createdLog);
+
+
                 }
-                if (logsRepository.SuscriptionCheckedIn(log.SubscriptionId))
+                else
                 {
-                    return Conflict("Subscription already checked In ");
+                    var log = new Logs
+                    {
+                        Code = Guid.NewGuid().ToString("N").Substring(0, 8),
+                        CheckInTime = DateTime.Now,
+                        SubscriptionId = logsDTO.SubscriptionId,
+                    };
+                    // Check if the subscription is already checked in
+                    if (logsRepository.SuscriptionCheckedIn(logsDTO.SubscriptionId))
+                    {
+                        return Conflict("Subscription already checked in.");
+                    }
+
+                    // Get the subscription details
+                    var subscription = await subscriptionRepository.GetSubscriptionIncludedDeletedAsync(logsDTO.SubscriptionId.Value);
+                    if (subscription == null)
+                    {
+                        return BadRequest("Subscription does not exist.");
+                    }
+                    bool activeSubscription = subscription.IsDeleted==false&&subscription.EndDate>= log.CheckInTime;
+
+                    if (!activeSubscription)
+                    {
+                        return BadRequest("Subscription is not active or has expired.");
+                    }
+
+                  
+
+                    await logsRepository.AddLogAsync(log);
+
+                    var createdLog = new LogsForViewDTO
+                    {
+                        Code = log.Code,
+                        CheckInTime = log.CheckInTime,
+                        SubscriptionId = log.SubscriptionId,
+                    };
+
+                    return Ok(createdLog);
                 }
-                await logsRepository.AddLogAsync(log);
-                var createdLog = new LogsForViewDTO
-                {
-                    Code = log.Code,
-                    CheckInTime = log.CheckInTime,
-                    SubscriptionId = log.SubscriptionId,
-
-                };
-
-                return Ok(createdLog);
             }
             catch (Exception ex)
             {
@@ -126,7 +166,7 @@ namespace ParkingLotManagementAPI.Controllers
                 return NotFound();
 
             }
-            if(log.CheckOutTime != DateTime.MinValue)
+            if (log.CheckOutTime != DateTime.MinValue)
             {
                 return Conflict("Code is already Checked Out");
             }

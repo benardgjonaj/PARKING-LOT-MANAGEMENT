@@ -16,26 +16,26 @@ namespace ParkingLotManagementAPI.Controllers
             this.parkingSpotRepository = parkingSpotRepository;
         }
         [HttpGet]
-        public async  Task<ActionResult<ParkingSpotViewDTO>> GetParkingSpots()
+        public async Task<ActionResult<ParkingSpotViewDTO>> GetParkingSpots()
         {
-           var parkingSpotInfo = await parkingSpotRepository.GetParkingSpotInfo();
-            if(parkingSpotInfo == null)
+            var parkingSpotInfo = await parkingSpotRepository.GetParkingSpotInfo();
+            if (parkingSpotInfo == null)
             {
                 return NotFound();
             }
-           
+
             return Ok(parkingSpotInfo);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateParkingSpot(int id, [FromBody]ParkingSpotDTO parkingSpotDTO)
+        public async Task<ActionResult> UpdateParkingSpot(int id, [FromBody] ParkingSpotDTO parkingSpotDTO)
         {
-            var parkingSpot=await parkingSpotRepository.GetParkingSpot(id);
-if(parkingSpot == null)
+            var parkingSpot = await parkingSpotRepository.GetParkingSpot(id);
+            if (parkingSpot == null)
             {
                 return NotFound();
             }
-             parkingSpot.TotalSpots = parkingSpotDTO.TotalSpots;
+            parkingSpot.TotalSpots = parkingSpotDTO.TotalSpots;
             await parkingSpotRepository.SaveChangesAsync();
             return NoContent();
         }

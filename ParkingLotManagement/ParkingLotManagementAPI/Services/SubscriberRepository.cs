@@ -7,19 +7,19 @@ namespace ParkingLotManagementAPI.Services
     public class SubscriberRepository : ISubscriberRepository
     {
         private readonly ApplicationContext context;
-       
+
         public SubscriberRepository(ApplicationContext context)
         {
             this.context = context;
         }
         public async Task<IEnumerable<Subscriber>> GetSubcribersAsync(string? searchQuery)
         {
-            var subscribers = context.Subscribers.Where(s=>s.IsDeleted==false).AsQueryable();
+            var subscribers = context.Subscribers.Where(s => s.IsDeleted == false).AsQueryable();
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 subscribers = subscribers.Where(s =>
-                    s.FirstName==searchQuery ||
+                    s.FirstName == searchQuery ||
                     s.LastName == searchQuery ||
                     s.IdCardNumber == searchQuery ||
                     s.Email == searchQuery);
@@ -29,13 +29,13 @@ namespace ParkingLotManagementAPI.Services
         }
         public async Task<Subscriber> GetSubcriberAsync(int id)
         {
-           var subscriber =await context.Subscribers.FirstOrDefaultAsync(s => s.Id == id&&s.IsDeleted==false);
+            var subscriber = await context.Subscribers.FirstOrDefaultAsync(s => s.Id == id && s.IsDeleted == false);
             return subscriber;
         }
 
         public async Task AddSubcriberAsync(Subscriber subscriber)
         {
-           
+
             context.Subscribers.Add(subscriber);
             context.SaveChanges();
         }
@@ -46,10 +46,14 @@ namespace ParkingLotManagementAPI.Services
             if (subscriber != null)
             {
                 subscriber.IsDeleted = true;
-               var  subscription= context.Subscriptions.Find(subscriber.Id);
-                if (subscription != null)
+                var subscriptions = context.Subscriptions.Where(s=>s.SubscriberId==id).ToList();
+                if (subscriptions != null)
                 {
-                    subscription.IsDeleted = true;
+                    foreach (var subscription in subscriptions)
+                    {
+                        subscription.IsDeleted = true;
+                    }
+                   
                 }
                 context.SaveChanges();
                 return true;
@@ -57,11 +61,11 @@ namespace ParkingLotManagementAPI.Services
             return false;
         }
 
-        public  async Task<bool>  IdCarNumberExistAsync(string idCardNumber)
+        public async Task<bool> IdCarNumberExistAsync(string idCardNumber)
         {
             var existingSubscriber = await context.Subscribers.FirstOrDefaultAsync(
                 s => s.IdCardNumber == idCardNumber);
-            if(existingSubscriber != null)
+            if (existingSubscriber != null)
             {
                 return true;
             }

@@ -4,7 +4,7 @@ using ParkingLotManagementAPI.Entities;
 
 namespace ParkingLotManagementAPI.Services
 {
-    public class PricingPlanRepository:IPricingPlanRepository
+    public class PricingPlanRepository : IPricingPlanRepository
     {
         private readonly ApplicationContext context;
 
@@ -15,7 +15,7 @@ namespace ParkingLotManagementAPI.Services
 
         public async Task<PricingPlan?> GetPricingPlanAsync(string type)
         {
-           return await context.PricingPlans.Where(p=>p.Type == type).FirstOrDefaultAsync();
+            return await context.PricingPlans.Where(p => p.Type == type).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<PricingPlan>> GetPricingPlansAsync()

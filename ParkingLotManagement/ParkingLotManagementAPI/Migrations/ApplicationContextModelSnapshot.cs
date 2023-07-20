@@ -170,8 +170,7 @@ namespace ParkingLotManagementAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubscriberId")
-                        .IsUnique();
+                    b.HasIndex("SubscriberId");
 
                     b.ToTable("Subscriptions");
                 });
@@ -187,19 +186,16 @@ namespace ParkingLotManagementAPI.Migrations
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Subscription", b =>
                 {
-                    b.HasOne("ParkingLotManagementAPI.Entities.Subscriber", "Subscriber")
-                        .WithOne("Subscription")
-                        .HasForeignKey("ParkingLotManagementAPI.Entities.Subscription", "SubscriberId")
+                    b.HasOne("ParkingLotManagementAPI.Entities.Subscriber", null)
+                        .WithMany("Subscriptions")
+                        .HasForeignKey("SubscriberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Subscriber");
                 });
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Subscriber", b =>
                 {
-                    b.Navigation("Subscription")
-                        .IsRequired();
+                    b.Navigation("Subscriptions");
                 });
 
             modelBuilder.Entity("ParkingLotManagementAPI.Entities.Subscription", b =>

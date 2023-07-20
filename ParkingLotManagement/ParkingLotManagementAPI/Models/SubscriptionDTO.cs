@@ -5,13 +5,7 @@ namespace ParkingLotManagementAPI.Models
 {
     public class SubscriptionDTO
     {
-        [Required]
-        public string Code { get; set; }
-        [Required]
-        public SubscriberForCreationDTO subscriberForCreationDTO { get; set; }
-     
-        [Required]
-        public decimal Price { get; set; }
+       
         [Required]
         public decimal DiscountValue { get; set; }
         [Required]
@@ -19,6 +13,10 @@ namespace ParkingLotManagementAPI.Models
         [Required]
         public DateTime EndDate { get; set; }
         [Required]
-        public bool IsDeleted { get; set; }
+        public int SubscriptionId { get; set; }
+     
+        
+      
+       
     }
 }

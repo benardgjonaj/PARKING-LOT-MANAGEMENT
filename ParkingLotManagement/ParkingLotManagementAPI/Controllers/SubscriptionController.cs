@@ -13,7 +13,7 @@ namespace ParkingLotManagementAPI.Controllers
         private readonly ISubscriptionRepository subscriptionRepository;
         private readonly ISubscriberRepository subscriberRepository;
 
-        public SubscriptionController(ISubscriptionRepository subscriptionRepository,ISubscriberRepository subscriberRepository)
+        public SubscriptionController(ISubscriptionRepository subscriptionRepository, ISubscriberRepository subscriberRepository)
         {
             this.subscriptionRepository = subscriptionRepository;
             this.subscriberRepository = subscriberRepository;
@@ -21,8 +21,8 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SubscriptionForViewDTO>>> GetSubscriptions(string? searchQuery)
         {
-            var subscriptions= await subscriptionRepository.GetSubscriptionsAsync(searchQuery);
-            var subscriptionsDTO=new List<SubscriptionForViewDTO>();
+            var subscriptions = await subscriptionRepository.GetSubscriptionsAsync(searchQuery);
+            var subscriptionsDTO = new List<SubscriptionForViewDTO>();
 
             foreach (var subscription in subscriptions)
             {
@@ -34,7 +34,7 @@ namespace ParkingLotManagementAPI.Controllers
                     DiscountValue = subscription.DiscountValue,
                     StartDate = subscription.StartDate,
                     EndDate = subscription.EndDate,
-                    IsDeleted = subscription.IsDeleted,
+                   
                 });
             }
 
@@ -45,7 +45,7 @@ namespace ParkingLotManagementAPI.Controllers
         {
             var subscription = await subscriptionRepository.GetSubscriptionAsync(id);
 
-            if(subscription == null)
+            if (subscription == null)
             {
                 return NotFound();
             }
@@ -57,83 +57,68 @@ namespace ParkingLotManagementAPI.Controllers
                 DiscountValue = subscription.DiscountValue,
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,
-                IsDeleted = subscription.IsDeleted,
+                
             };
 
             return Ok(subscriptionDTO);
         }
 
         [HttpPost]
-        public async Task<ActionResult<SubscriptionDTO>> CreateSubscription([FromBody] SubscriptionDTO subscriptionDTO)
+        public async Task<ActionResult<SubscriptionForViewDTO>> CreateSubscription([FromBody] SubscriptionDTO subscriptionDTO)
         {
             var subscriptionDetails = subscriptionDTO;
-            var subscriberDetails = subscriptionDTO.subscriberForCreationDTO;
+            var subscriber = await subscriberRepository.GetSubcriberAsync(subscriptionDetails.SubscriptionId);
+            if (subscriber == null)
+            {
+                return BadRequest("You are trying to add subscription to a not existing subscriber");
+            }
+            var subscriptions =await subscriptionRepository.GetSubscriptionsBySubscriberIdAsync(subscriber.Id);
+            
+            bool hasActiveSubscription = subscriptions.Any(sub =>sub.IsDeleted==false && sub.EndDate >= subscriptionDetails.StartDate);
+
+            if (hasActiveSubscription)
+            {
+               
+                return BadRequest("Cannot add a new subscription while there is an active subscription.");
+            }
 
             var subscription = new Subscription
             {
-
+                Code = Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper(),
                 StartDate = subscriptionDetails.StartDate,
                 EndDate = subscriptionDetails.EndDate,
                 DiscountValue = subscriptionDetails.DiscountValue,
-                Price = subscriptionDetails.Price,
-                Code = subscriptionDetails.Code,
-                IsDeleted = subscriptionDetails.IsDeleted,
+                IsDeleted = false,
+                SubscriberId=subscriptionDetails.SubscriptionId
+                
 
             };
+            subscription.Price = subscriptionRepository.CalculatePrice(subscription.StartDate,subscription.EndDate) - subscription.DiscountValue;
+           
 
-            var subscriber = new Subscriber
-            {
-
-                FirstName = subscriberDetails.FirstName,
-                LastName = subscriberDetails.LastName,
-                Email = subscriberDetails.Email,
-                IdCardNumber = subscriberDetails.IdCardNumber,
-                PhoneNumber = subscriberDetails.PhoneNumber,
-                Birthday = subscriberDetails.Birthday,
-                PlateNumber = subscriberDetails.PlateNumber,
-                IsDeleted = subscriberDetails.IsDeleted,
-
-            };
-
-            subscription.Subscriber= subscriber;
-            if(await subscriptionRepository.CodeExistAsync(subscription.Code))
-            {
-                return Conflict("A subscription with the same Code  number already exists.");
-            }
-            if (await subscriberRepository.IdCarNumberExistAsync(subscription.Subscriber.IdCardNumber))
-            {
-                return Conflict("A subscriber with the same ID card number already exists.");
-            }
+           
             await subscriptionRepository.AddSubscriptionAsync(subscription);
 
 
-            var createdSubscriptionDTO = new SubscriptionDTO
+            var createdSubscriptionDTO = new SubscriptionForViewDTO
             {
+                Code = subscription.Code,
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,
                 DiscountValue = subscription.DiscountValue,
                 Price = subscription.Price,
-                Code = subscription.Code,
-                IsDeleted = subscription.IsDeleted,
-                subscriberForCreationDTO = new SubscriberForCreationDTO
-                {
-                    FirstName = subscriber.FirstName,
-                    LastName = subscriber.LastName,
-                    PhoneNumber = subscriber.PhoneNumber,
-                    Email = subscriber.Email,
-                    IdCardNumber = subscriber.IdCardNumber,
-                    PlateNumber = subscriber.PlateNumber,
-                    IsDeleted = subscriber.IsDeleted,
-                    Birthday = subscriber.Birthday,
-                }
+                SubscriberId=subscription.SubscriberId
+                
+             
 
             };
             return Ok(createdSubscriptionDTO);
         }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<int>> DeleteSubscription(int id)
         {
-           bool isDeleted= subscriptionRepository.DeleteSubscription(id);
+            bool isDeleted = subscriptionRepository.DeleteSubscription(id);
             if (isDeleted)
             {
 

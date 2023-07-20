@@ -24,11 +24,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationContext>(
     dbContextOptions=> dbContextOptions.UseSqlServer(builder.Configuration
     .GetConnectionString("DefaultSQLConnection")));
-builder.Services.AddScoped<IParkingSpotRepository,ParkingSpotRepository>();
-builder.Services.AddScoped<IPricingPlanRepository,PricingPlanRepository>();
-builder.Services.AddScoped<ISubscriberRepository,SubscriberRepository>();
-builder.Services.AddScoped<ISubscriptionRepository,SubscriptionRepository>();
-builder.Services.AddScoped<ILogsRepository,LogsRepository>();
+builder.Services.AddScoped<IParkingSpotRepository, ParkingSpotRepository>();
+builder.Services.AddScoped<IPricingPlanRepository, PricingPlanRepository>();
+builder.Services.AddScoped<ISubscriberRepository, SubscriberRepository>();
+ builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<ILogsRepository, LogsRepository>();
 
 
 var app = builder.Build();

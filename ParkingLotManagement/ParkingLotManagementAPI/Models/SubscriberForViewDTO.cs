@@ -13,6 +13,6 @@ namespace ParkingLotManagementAPI.Models
         public string PhoneNumber { get; set; }
         public DateTime Birthday { get; set; }
         public string PlateNumber { get; set; }
-        public int SubscriptionID { get; set; }
+        
     }
 }

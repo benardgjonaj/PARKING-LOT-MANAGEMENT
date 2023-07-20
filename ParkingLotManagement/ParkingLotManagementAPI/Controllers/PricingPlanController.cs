@@ -12,7 +12,7 @@ namespace ParkingLotManagementAPI.Controllers
     {
         private readonly IPricingPlanRepository pricingPlanRepository;
 
-    
+
         public PricingPlanController(IPricingPlanRepository pricingPlanRepository)
         {
             this.pricingPlanRepository = pricingPlanRepository;
@@ -21,17 +21,18 @@ namespace ParkingLotManagementAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PricingPlanDTO>>> PricingPlans()
         {
-            var pricingPlansEntities= await pricingPlanRepository.GetPricingPlansAsync();
-           var pricingPlansDTOs=new List<PricingPlanDTO>();
+            var pricingPlansEntities = await pricingPlanRepository.GetPricingPlansAsync();
+            var pricingPlansDTOs = new List<PricingPlanDTO>();
 
             foreach (var pricingplan in pricingPlansEntities)
             {
-                pricingPlansDTOs.Add(new PricingPlanDTO {
+                pricingPlansDTOs.Add(new PricingPlanDTO
+                {
                     Type = pricingplan.Type,
-                HourlyPricing =pricingplan.HourlyPricing,
-                DailyPricing=pricingplan.DailyPricing,
-                MinimumHours=pricingplan.MinimumHours,
-                
+                    HourlyPricing = pricingplan.HourlyPricing,
+                    DailyPricing = pricingplan.DailyPricing,
+                    MinimumHours = pricingplan.MinimumHours,
+
                 });
             }
             return Ok(pricingPlansDTOs);
@@ -40,7 +41,7 @@ namespace ParkingLotManagementAPI.Controllers
         public async Task<ActionResult<PricingPlanDTO>> GetPricingPlan(string type)
         {
             var pricePlaningEntity = await pricingPlanRepository.GetPricingPlanAsync(type);
-            if(pricePlaningEntity==null)
+            if (pricePlaningEntity == null)
             {
                 return NotFound();
             }
@@ -50,24 +51,24 @@ namespace ParkingLotManagementAPI.Controllers
                 HourlyPricing = pricePlaningEntity.HourlyPricing,
                 DailyPricing = pricePlaningEntity.DailyPricing,
                 MinimumHours = pricePlaningEntity.MinimumHours,
-               
+
             };
             return Ok(pricingPlaningDTO);
         }
         [HttpPut("{type}")]
-        public async Task< ActionResult<PricingPlanDTO>> UpdatePricingPlan(string type, 
+        public async Task<ActionResult<PricingPlanDTO>> UpdatePricingPlan(string type,
             [FromBody] PricingPlanForUpdateDTO updatedPricingPlanDTO)
         {
-            var pricePlaningEntity=await pricingPlanRepository.GetPricingPlanAsync(type);
+            var pricePlaningEntity = await pricingPlanRepository.GetPricingPlanAsync(type);
             if (pricePlaningEntity == null)
             {
                 return NotFound();
             }
-            
+
             pricePlaningEntity.MinimumHours = updatedPricingPlanDTO.MinimumHours;
             pricePlaningEntity.DailyPricing = updatedPricingPlanDTO.DailyPricing;
             pricePlaningEntity.HourlyPricing = updatedPricingPlanDTO.HourlyPricing;
-            
+
             await pricingPlanRepository.SaveChangesAsync();
             var updatedPricingPlan = new PricingPlanDTO
             {
