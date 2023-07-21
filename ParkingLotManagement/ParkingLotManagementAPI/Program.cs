@@ -3,6 +3,8 @@ using ParkingLotManagementAPI.Data;
 using ParkingLotManagementAPI.Services;
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors(options =>
 {

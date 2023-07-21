@@ -97,7 +97,9 @@ namespace ParkingLotManagementAPI.Controllers
                     };
 
                     await logsRepository.AddLogAsync(log);
-
+                   
+                    
+       
                     var createdLog = new LogsForViewDTO
                     {
                         Code = log.Code,

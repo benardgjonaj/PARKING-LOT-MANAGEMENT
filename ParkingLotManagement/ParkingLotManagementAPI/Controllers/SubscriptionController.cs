@@ -5,7 +5,9 @@ using ParkingLotManagementAPI.Models;
 using ParkingLotManagementAPI.Services;
 
 namespace ParkingLotManagementAPI.Controllers
+
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class SubscriptionController : ControllerBase

@@ -52,6 +52,15 @@ namespace ParkingLotManagementAPI.Services
                     foreach (var subscription in subscriptions)
                     {
                         subscription.IsDeleted = true;
+                        var logs=context.Logs.Where(l=>l.SubscriptionId==subscription.Id).ToList();
+                        if (logs != null)
+                        {
+                            foreach (var log in logs)
+                            {
+                                log.SubscriptionId = null;
+                            }
+                        }
+
                     }
                    
                 }
