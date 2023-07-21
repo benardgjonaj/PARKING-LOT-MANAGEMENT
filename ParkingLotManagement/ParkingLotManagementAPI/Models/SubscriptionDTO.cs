@@ -7,6 +7,7 @@ namespace ParkingLotManagementAPI.Models
     {
        
         [Required]
+        [Range(0, 100, ErrorMessage = "Discount must be between 0 and 100.")]
         public decimal DiscountValue { get; set; }
         [Required]
         public DateTime StartDate { get; set; }

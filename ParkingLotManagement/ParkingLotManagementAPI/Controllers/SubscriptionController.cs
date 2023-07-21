@@ -95,7 +95,7 @@ namespace ParkingLotManagementAPI.Controllers
                 
 
             };
-            subscription.Price = subscriptionRepository.CalculatePrice(subscription.StartDate,subscription.EndDate) - subscription.DiscountValue;
+            subscription.Price = subscriptionRepository.CalculatePrice(subscription.StartDate,subscription.EndDate)*(1-subscription.DiscountValue/100);
            
 
            
