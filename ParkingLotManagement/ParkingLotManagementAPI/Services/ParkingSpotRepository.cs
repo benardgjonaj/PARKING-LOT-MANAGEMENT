@@ -24,23 +24,28 @@ namespace ParkingLotManagementAPI.Services
         {
             var parkingSpotInfo = new ParkingSpotViewDTO();
             parkingSpotInfo.TotalSpots = await context.ParkingSpots.SumAsync(ps => ps.TotalSpots);
-            parkingSpotInfo.ReservedSpots = await context.Subscriptions.CountAsync(s => s.IsDeleted == false&&s.EndDate>DateTime.Now);
+            parkingSpotInfo.ReservedSpots = await context.Subscriptions.CountAsync(s => s.IsDeleted == false && s.EndDate > DateTime.Now);
+    
+            
+                parkingSpotInfo.OccupiedReservedSpots = await context.Logs.CountAsync(l => l.SubscriptionId!=null&&
+                l.Subscription.EndDate>DateTime.Now&&l.Subscription.IsDeleted==false &&l.CheckOutTime==DateTime.MinValue);
+                
+                
+                parkingSpotInfo.FreeReservedSpots = parkingSpotInfo.ReservedSpots - parkingSpotInfo.OccupiedReservedSpots;
 
-            parkingSpotInfo.OccupiedReservedSpots = await context.Logs.CountAsync(s => s.SubscriptionId != null && s.CheckOutTime == DateTime.MinValue);
-            parkingSpotInfo.FreeReservedSpots = parkingSpotInfo.ReservedSpots - parkingSpotInfo.OccupiedReservedSpots;
+                parkingSpotInfo.RegularSpots = parkingSpotInfo.TotalSpots - parkingSpotInfo.ReservedSpots;
+                parkingSpotInfo.OccupiedRegularSpots = await context.Logs.CountAsync(l => l.SubscriptionId == null && l.CheckOutTime == DateTime.MinValue);
 
-            parkingSpotInfo.RegularSpots = parkingSpotInfo.TotalSpots - parkingSpotInfo.ReservedSpots;
-            parkingSpotInfo.OccupiedRegularSpots = await context.Logs.CountAsync(l => l.SubscriptionId == null && l.CheckOutTime == DateTime.MinValue);
+                parkingSpotInfo.FreeRegularSpots = parkingSpotInfo.RegularSpots - parkingSpotInfo.OccupiedRegularSpots;
 
-            parkingSpotInfo.FreeRegularSpots = parkingSpotInfo.RegularSpots - parkingSpotInfo.OccupiedRegularSpots;
-
-            return parkingSpotInfo;
+                return parkingSpotInfo;
 
 
+            
         }
-        public async Task<bool> SaveChangesAsync()
-        {
-            return (await context.SaveChangesAsync() >= 0);
+            public async Task<bool> SaveChangesAsync()
+            {
+                return (await context.SaveChangesAsync() >= 0);
+            }
         }
     }
-}

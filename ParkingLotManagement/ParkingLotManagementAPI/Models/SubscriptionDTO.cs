@@ -17,7 +17,6 @@ namespace ParkingLotManagementAPI.Models
         public int SubscriberId { get; set; }
      
         
-      
        
     }
 }
