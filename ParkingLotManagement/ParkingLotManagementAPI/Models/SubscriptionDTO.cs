@@ -13,7 +13,7 @@ namespace ParkingLotManagementAPI.Models
         [Required]
         public DateTime EndDate { get; set; }
         [Required]
-        public int SubscriptionId { get; set; }
+        public int SubscriberId { get; set; }
      
         
       

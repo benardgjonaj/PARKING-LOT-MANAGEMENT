@@ -69,7 +69,7 @@ namespace ParkingLotManagementAPI.Controllers
         public async Task<ActionResult<SubscriptionForViewDTO>> CreateSubscription([FromBody] SubscriptionDTO subscriptionDTO)
         {
             var subscriptionDetails = subscriptionDTO;
-            var subscriber = await subscriberRepository.GetSubcriberAsync(subscriptionDetails.SubscriptionId);
+            var subscriber = await subscriberRepository.GetSubcriberAsync(subscriptionDetails.SubscriberId);
             if (subscriber == null)
             {
                 return BadRequest("You are trying to add subscription to a not existing subscriber");
@@ -91,7 +91,7 @@ namespace ParkingLotManagementAPI.Controllers
                 EndDate = subscriptionDetails.EndDate,
                 DiscountValue = subscriptionDetails.DiscountValue,
                 IsDeleted = false,
-                SubscriberId=subscriptionDetails.SubscriptionId
+                SubscriberId=subscriptionDetails.SubscriberId
                 
 
             };
