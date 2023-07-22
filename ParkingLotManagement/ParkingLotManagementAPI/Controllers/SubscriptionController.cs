@@ -4,6 +4,7 @@ using ParkingLotManagementAPI.Entities;
 using ParkingLotManagementAPI.Models;
 using ParkingLotManagementAPI.Services;
 
+
 namespace ParkingLotManagementAPI.Controllers
 
 {
@@ -25,9 +26,10 @@ namespace ParkingLotManagementAPI.Controllers
         {
             var subscriptions = await subscriptionRepository.GetSubscriptionsAsync(searchQuery);
             var subscriptionsDTO = new List<SubscriptionForViewDTO>();
-
+            
             foreach (var subscription in subscriptions)
             {
+               
                 subscriptionsDTO.Add(new SubscriptionForViewDTO
                 {
                     Id= subscription.Id,
@@ -37,8 +39,11 @@ namespace ParkingLotManagementAPI.Controllers
                     DiscountValue = subscription.DiscountValue,
                     StartDate = subscription.StartDate,
                     EndDate = subscription.EndDate,
-                   
+                    
                 });
+               
+                
+
             }
 
             return Ok(subscriptionsDTO);
@@ -78,16 +83,31 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
+            var subscriber= await subscriberRepository.GetSubcriberAsync(subscription.SubscriberId);
+            if(subscriber == null)
+            {
+                return NotFound();
+            }
             var subscriptionDTO = new SubscriptionForViewDTO
             {
-                Id= subscription.Id,
+                Id = subscription.Id,
                 Code = subscription.Code,
                 SubscriberId = subscription.SubscriberId,
                 Price = subscription.Price,
                 DiscountValue = subscription.DiscountValue,
                 StartDate = subscription.StartDate,
                 EndDate = subscription.EndDate,
-                
+                Subscriber = new SubscriberForViewDTO
+                {
+                    Id = subscriber.Id,
+                    FirstName = subscriber.FirstName,
+                    LastName = subscriber.LastName,
+                    IdCardNumber = subscriber.IdCardNumber,
+                    Birthday = subscriber.Birthday,
+                    PlateNumber = subscriber.PlateNumber,
+                    Email = subscriber.Email,
+                    PhoneNumber = subscriber.PhoneNumber,
+                }
             };
 
             return Ok(subscriptionDTO);
