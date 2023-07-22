@@ -8,5 +8,6 @@
         public DateTime CheckInTime { get; set; }
         public DateTime? CheckOutTime { get; set; }
         public decimal Price { get; set; }
+        public SubscriptionForLogViewDTO Subscription { get; set; }
     }
 }

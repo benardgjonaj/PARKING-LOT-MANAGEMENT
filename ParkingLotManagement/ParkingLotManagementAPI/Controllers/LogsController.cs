@@ -24,22 +24,52 @@ namespace ParkingLotManagementAPI.Controllers
         public async Task<ActionResult<IEnumerable<LogsForViewDTO>>> GetLogs(string? searchQuery)
         {
             var logs = await logsRepository.GetLogsAsync(searchQuery);
-            var logsDTO = new List<LogsForViewDTO>();
+            var logsDTOList = new List<LogsForViewDTO>();
+
             foreach (var log in logs)
             {
-                logsDTO.Add(new LogsForViewDTO
+                var logsDTO = new LogsForViewDTO()
                 {
                     Code = log.Code,
                     CheckInTime = log.CheckInTime,
-                    //CheckOutTime = log.CheckOutTime,
                     CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
                     Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
+                };
 
-                });
+                if (log.SubscriptionId == null)
+                {
+                    logsDTO.Subscription = null;
+                }
+                else
+                {
+                    var subscription = await subscriptionRepository.GetSubscriptionAsync(log.SubscriptionId);
+                    if (subscription == null)
+                    {
+
+                        logsDTO.Subscription = null;
+                    }
+                    else
+                    {
+                        logsDTO.Subscription = new SubscriptionForLogViewDTO
+                        {
+                            Id = subscription.Id,
+                            Code = subscription.Code,
+                            SubscriberId = subscription.SubscriberId,
+                            Price = subscription.Price,
+                            DiscountValue = subscription.DiscountValue,
+                            StartDate = subscription.StartDate,
+                            EndDate = subscription.EndDate
+                        };
+                    }
+                }
+
+                logsDTOList.Add(logsDTO);
             }
-            return Ok(logsDTO);
+
+            return Ok(logsDTOList);
         }
+    
         [HttpGet("{day}")]
         public async Task<ActionResult<IEnumerable<LogsForViewDTO>>> GetLogsByDay(DateTime day)
         {
@@ -56,7 +86,7 @@ namespace ParkingLotManagementAPI.Controllers
                     Price = log.Price,
                     SubscriptionId = log.SubscriptionId,
 
-                });
+                }); 
             }
             return Ok(logsDTO);
         }
@@ -68,7 +98,7 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
-
+            
             var logsDTO = new LogsForViewDTO()
 
             {
@@ -77,6 +107,25 @@ namespace ParkingLotManagementAPI.Controllers
                 CheckOutTime = log.CheckOutTime != DateTime.MinValue ? log.CheckOutTime : (DateTime?)null,
                 Price = log.Price,
                 SubscriptionId = log.SubscriptionId,
+            };
+            if(log.SubscriptionId==null)
+            {
+                logsDTO.Subscription = null;
+            }
+            var subscription = await subscriptionRepository.GetSubscriptionAsync(log.SubscriptionId);
+            if (subscription == null)
+            {
+                return NotFound();
+            }
+            logsDTO.Subscription = new SubscriptionForLogViewDTO
+            {
+                Id = subscription.Id,
+                Code = subscription.Code,
+                SubscriberId = subscription.SubscriberId,
+                Price = subscription.Price,
+                DiscountValue = subscription.DiscountValue,
+                StartDate = subscription.StartDate,
+                EndDate = subscription.EndDate
             };
 
             return Ok(logsDTO);

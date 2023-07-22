@@ -63,7 +63,13 @@ namespace ParkingLotManagementAPI.Services
             return await context.Subscriptions.Where(s => s.IsDeleted == false)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
-      
+        public async Task<Subscription> GetSubscriptionAsync(int? id)
+        {
+            return await context.Subscriptions.Where(s => s.IsDeleted == false)
+                .FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+
         public async Task<Subscription> GetSubscriptionIncludedDeletedAsync(int id)
         {
             return await context.Subscriptions
