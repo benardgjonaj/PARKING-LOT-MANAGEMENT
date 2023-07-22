@@ -6,6 +6,7 @@ namespace ParkingLotManagementAPI.Services
     {
         Task AddSubcriberAsync(Subscriber subscriber);
         Task <IEnumerable<Subscriber>> GetSubcribersAsync(string? searchQuery);
+        Task<IEnumerable<Subscriber>> GetSubscribersWithNoActiveSubscriptionsAsync();
         Task<Subscriber> GetSubcriberAsync(int id);
        
         bool DeleteSubscriber(int id);

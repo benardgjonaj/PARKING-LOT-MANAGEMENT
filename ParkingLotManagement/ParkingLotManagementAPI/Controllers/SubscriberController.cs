@@ -48,6 +48,36 @@ namespace ParkingLotManagementAPI.Controllers
 
             return Ok(subscribersDto);
         }
+        [HttpGet("GetSubscribersWithNoActiveSubscriptions")]
+        public async Task<ActionResult<IEnumerable<SubscriberForCreationDTO>>> GetSubscribersWithNoActiveSubscriptionsAsync()
+        {
+            var subscribers = await subscriberRepository.GetSubscribersWithNoActiveSubscriptionsAsync();
+            var subscribersDto = new List<SubscriberForCreationDTO>();
+
+            if (subscribers == null)
+            {
+                return NotFound();
+            }
+
+            foreach (var subscriber in subscribers)
+            {
+                subscribersDto.Add(new SubscriberForCreationDTO
+                {
+                    Id = subscriber.Id,
+                    FirstName = subscriber.FirstName,
+                    LastName = subscriber.LastName,
+                    PhoneNumber = subscriber.PhoneNumber,
+                    Email = subscriber.Email,
+                    IdCardNumber = subscriber.IdCardNumber,
+                    PlateNumber = subscriber.PlateNumber,
+                    Birthday = subscriber.Birthday,
+                    IsDeleted = subscriber.IsDeleted,
+                });
+            }
+
+            return Ok(subscribersDto);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriberForCreationDTO>> GetSubcriber(int id)
         {
