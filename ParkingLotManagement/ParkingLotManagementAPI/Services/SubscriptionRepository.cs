@@ -98,7 +98,15 @@ namespace ParkingLotManagementAPI.Services
             var subscriprions=await context.Subscriptions.Where(s=>s.SubscriberId==id).ToListAsync();
             return subscriprions;
         }
+        public async Task<IEnumerable<Subscription>> GetSubscriptionsWithNoActiveLogsAsync()
+        {
+            var subscriptions = context.Subscriptions.Where(s => s.IsDeleted == false&&s.EndDate>DateTime.Now).AsQueryable();
+            var filteredSubscriptions = subscriptions
+           .Where(sub => sub.Logs == null || sub.Logs.All(log => log.CheckOutTime != DateTime.MinValue));
 
+            return filteredSubscriptions;
+
+        }
         public async Task<bool> SaveChangesAsync()
         {
             return (await context.SaveChangesAsync() >= 0);

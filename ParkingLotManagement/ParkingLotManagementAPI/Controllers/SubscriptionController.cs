@@ -43,6 +43,32 @@ namespace ParkingLotManagementAPI.Controllers
 
             return Ok(subscriptionsDTO);
         }
+        [HttpGet("GetSubscriptionsWithNoActiveLogs")]
+        public async Task<ActionResult<IEnumerable<SubscriptionForViewDTO>>> GetSubscriptionsWithNoActiveLogs()
+        {
+            var subscriptions = await subscriptionRepository.GetSubscriptionsWithNoActiveLogsAsync();
+            var subscriptionsDTO = new List<SubscriptionForViewDTO>();
+
+            foreach (var subscription in subscriptions)
+            {
+                if (subscription.Logs == null || subscription.Logs.All(log => log.CheckOutTime != DateTime.MinValue))
+                {
+                    subscriptionsDTO.Add(new SubscriptionForViewDTO
+                    {
+                        Id = subscription.Id,
+                        Code = subscription.Code,
+                        SubscriberId = subscription.SubscriberId,
+                        Price = subscription.Price,
+                        DiscountValue = subscription.DiscountValue,
+                        StartDate = subscription.StartDate,
+                        EndDate = subscription.EndDate,
+                    });
+                }
+            }
+
+            return Ok(subscriptionsDTO);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriptionForViewDTO>> GetSubscription(int id)
         {
