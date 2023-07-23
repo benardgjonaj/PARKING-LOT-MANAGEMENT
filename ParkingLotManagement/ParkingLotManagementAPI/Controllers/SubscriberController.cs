@@ -78,6 +78,7 @@ namespace ParkingLotManagementAPI.Controllers
             return Ok(subscribersDto);
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SubscriberForCreationDTO>> GetSubcriber(int id)
         {
@@ -86,7 +87,8 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
-            var subscriberDTO = new SubscriberForCreationDTO
+            var activeSubscription=subscriber.Subscriptions.FirstOrDefault(s=>s.IsDeleted==false&&s.EndDate>DateTime.Now);
+            var subscriberDTO = new SubscriberWithSubscriptionDTO
             {
                 Id = subscriber.Id,
                 FirstName = subscriber.FirstName,
@@ -97,6 +99,18 @@ namespace ParkingLotManagementAPI.Controllers
                 Email = subscriber.Email,
                 PlateNumber = subscriber.PlateNumber,
                 IsDeleted = subscriber.IsDeleted,
+                Subscription= activeSubscription==null? null : new SubscriptionForLogViewDTO
+                {
+                    Id=activeSubscription.Id,
+                    Code=activeSubscription.Code,
+                    Price=activeSubscription.Price,
+                    DiscountValue=activeSubscription.DiscountValue,
+                    StartDate=activeSubscription.StartDate,
+                    EndDate=activeSubscription.EndDate,
+                    SubscriberId=activeSubscription.SubscriberId,
+                    
+
+                }
             };
 
             return Ok(subscriberDTO);

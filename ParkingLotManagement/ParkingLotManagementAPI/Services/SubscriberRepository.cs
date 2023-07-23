@@ -37,7 +37,10 @@ namespace ParkingLotManagementAPI.Services
         }
         public async Task<Subscriber> GetSubcriberAsync(int id)
         {
-            var subscriber = await context.Subscribers.FirstOrDefaultAsync(s => s.Id == id && s.IsDeleted == false);
+            var subscriber = await context.Subscribers
+       .Include(s => s.Subscriptions) // Eager loading non-deleted Subscriptions
+       .FirstOrDefaultAsync(s => s.Id == id && s.IsDeleted == false);
+
             return subscriber;
         }
 
