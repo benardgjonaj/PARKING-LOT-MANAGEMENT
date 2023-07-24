@@ -133,6 +133,11 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
+            var subscriber = await subscriberRepository.GetSubcriberAsync(subscription.SubscriberId);
+            if (subscriber == null)
+            {
+                return NotFound();
+            }
             logsDTO.Subscription = new SubscriptionForViewDTO
             {
                 Id = subscription.Id,
@@ -141,7 +146,19 @@ namespace ParkingLotManagementAPI.Controllers
                 Price = subscription.Price,
                 DiscountValue = subscription.DiscountValue,
                 StartDate = subscription.StartDate,
-                EndDate = subscription.EndDate
+                EndDate = subscription.EndDate,
+                Subscriber = new SubscriberForViewDTO
+                {
+                    FirstName = subscriber.FirstName,
+                    LastName = subscriber.LastName,
+                    IdCardNumber = subscriber.IdCardNumber,
+                    PhoneNumber = subscriber.PhoneNumber,
+                    PlateNumber = subscriber.PhoneNumber,
+                    Email = subscriber.Email,
+                    Birthday = subscriber.Birthday,
+                    Id = subscriber.Id
+
+                }
             };
 
             return Ok(logsDTO);
