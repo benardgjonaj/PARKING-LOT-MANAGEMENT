@@ -114,9 +114,8 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
-            
-            var logsDTO = new LogsForViewDTO()
 
+            var logsDTO = new LogsForViewDTO()
             {
                 Code = log.Code,
                 CheckInTime = log.CheckInTime,
@@ -124,45 +123,47 @@ namespace ParkingLotManagementAPI.Controllers
                 Price = log.Price,
                 SubscriptionId = log.SubscriptionId,
             };
-            if(log.SubscriptionId==null)
-            {
-                logsDTO.Subscription = null;
-            }
-            var subscription = await subscriptionRepository.GetSubscriptionAsync(log.SubscriptionId);
-            if (subscription == null)
-            {
-                return NotFound();
-            }
-            var subscriber = await subscriberRepository.GetSubcriberAsync(subscription.SubscriberId);
-            if (subscriber == null)
-            {
-                return NotFound();
-            }
-            logsDTO.Subscription = new SubscriptionForViewDTO
-            {
-                Id = subscription.Id,
-                Code = subscription.Code,
-                SubscriberId = subscription.SubscriberId,
-                Price = subscription.Price,
-                DiscountValue = subscription.DiscountValue,
-                StartDate = subscription.StartDate,
-                EndDate = subscription.EndDate,
-                Subscriber = new SubscriberForViewDTO
-                {
-                    FirstName = subscriber.FirstName,
-                    LastName = subscriber.LastName,
-                    IdCardNumber = subscriber.IdCardNumber,
-                    PhoneNumber = subscriber.PhoneNumber,
-                    PlateNumber = subscriber.PhoneNumber,
-                    Email = subscriber.Email,
-                    Birthday = subscriber.Birthday,
-                    Id = subscriber.Id
 
+            if (log.SubscriptionId != null)
+            {
+                var subscription = await subscriptionRepository.GetSubscriptionAsync(log.SubscriptionId);
+                if (subscription != null)
+                {
+                    logsDTO.Subscription = new SubscriptionForViewDTO
+                    {
+                        Id = subscription.Id,
+                        Code = subscription.Code,
+                        SubscriberId = subscription.SubscriberId,
+                        Price = subscription.Price,
+                        DiscountValue = subscription.DiscountValue,
+                        StartDate = subscription.StartDate,
+                        EndDate = subscription.EndDate,
+                    };
+
+                    if (subscription.SubscriberId != null)
+                    {
+                        var subscriber = await subscriberRepository.GetSubcriberAsync(subscription.SubscriberId);
+                        if (subscriber != null)
+                        {
+                            logsDTO.Subscription.Subscriber = new SubscriberForViewDTO
+                            {
+                                FirstName = subscriber.FirstName,
+                                LastName = subscriber.LastName,
+                                IdCardNumber = subscriber.IdCardNumber,
+                                PhoneNumber = subscriber.PhoneNumber,
+                                PlateNumber = subscriber.PhoneNumber, // Is this correct? It was using PhoneNumber before, verify and change if necessary.
+                                Email = subscriber.Email,
+                                Birthday = subscriber.Birthday,
+                                Id = subscriber.Id,
+                            };
+                        }
+                    }
                 }
-            };
+            }
 
             return Ok(logsDTO);
         }
+
 
         [HttpPost]
         public async Task<ActionResult<LogsForViewDTO>> CheckIn([FromBody] CheckInDTO logsDTO)
