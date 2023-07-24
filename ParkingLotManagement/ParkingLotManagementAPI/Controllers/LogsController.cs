@@ -12,13 +12,15 @@ namespace ParkingLotManagementAPI.Controllers
     {
         private readonly ILogsRepository logsRepository;
         private readonly ISubscriptionRepository subscriptionRepository;
+        private readonly ISubscriberRepository subscriberRepository;
 
         public ISubscriptionRepository SubscriptionRepository { get; }
 
-        public LogsController(ILogsRepository logsRepository, ISubscriptionRepository subscriptionRepository)
+        public LogsController(ILogsRepository logsRepository, ISubscriptionRepository subscriptionRepository,ISubscriberRepository subscriberRepository)
         {
             this.logsRepository = logsRepository;
            this.subscriptionRepository = subscriptionRepository;
+            this.subscriberRepository = subscriberRepository;
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LogsForViewDTO>>> GetLogs(string? searchQuery)
@@ -51,7 +53,8 @@ namespace ParkingLotManagementAPI.Controllers
                     }
                     else
                     {
-                        logsDTO.Subscription = new SubscriptionForLogViewDTO
+                        var subscriber= await subscriberRepository.GetSubcriberAsync(subscription.SubscriberId);
+                        logsDTO.Subscription = new SubscriptionForViewDTO
                         {
                             Id = subscription.Id,
                             Code = subscription.Code,
@@ -59,7 +62,20 @@ namespace ParkingLotManagementAPI.Controllers
                             Price = subscription.Price,
                             DiscountValue = subscription.DiscountValue,
                             StartDate = subscription.StartDate,
-                            EndDate = subscription.EndDate
+                            EndDate = subscription.EndDate,
+                            Subscriber= new SubscriberForViewDTO
+                            {
+                                FirstName=subscriber.FirstName,
+                                LastName=subscriber.LastName,
+                                IdCardNumber=subscriber.IdCardNumber,
+                                PhoneNumber=subscriber.PhoneNumber,
+                                PlateNumber=subscriber.PhoneNumber,
+                                Email=subscriber.Email,
+                                Birthday=subscriber.Birthday,
+                                Id = subscriber.Id
+
+                            }
+
                         };
                     }
                 }
@@ -117,7 +133,7 @@ namespace ParkingLotManagementAPI.Controllers
             {
                 return NotFound();
             }
-            logsDTO.Subscription = new SubscriptionForLogViewDTO
+            logsDTO.Subscription = new SubscriptionForViewDTO
             {
                 Id = subscription.Id,
                 Code = subscription.Code,
